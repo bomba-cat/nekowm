@@ -4,6 +4,22 @@ xcb_connection_t *connection;
 xcb_screen_t *screen;
 volatile sig_atomic_t running = 1;
 
+void nekowm_summon(const char *cmd[])
+{
+	if (fork() == 0)
+	{
+		if (fork() > 0)
+		{
+			exit(0);
+		}
+
+		setsid();
+		execvp(cmd[0], (char *const *)cmd);
+		perror("execvp failed");
+		exit(1);
+	}
+}
+
 void nekowm_sigint_handler(int sig)
 {
 	running = 0;
@@ -32,9 +48,37 @@ void nekowm_map_window(xcb_window_t window)
 	xcb_flush(connection);
 }
 
+void nekowm_show_window(xcb_window_t window)
+{
+	uint32_t values[4] = { 100, 100, 800, 600 };
+	uint16_t mask = XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y |
+									XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT;
+	xcb_configure_window(connection, window, mask, values);
+
+	xcb_configure_notify_event_t event =
+	{
+		.response_type = XCB_CONFIGURE_NOTIFY,
+		.event = window,
+		.window = window,
+		.above_sibling = XCB_NONE,
+		.x = values[0],
+		.y = values[1],
+		.width = values[2],
+		.height = values[3],
+		.border_width = 0,
+		.override_redirect = 0
+	};
+	xcb_send_event(connection, 0, window, XCB_EVENT_MASK_STRUCTURE_NOTIFY, (char *)&event);
+
+	xcb_flush(connection);
+}
+
 void nekowm_run()
 {
 	xcb_generic_event_t *event;
+
+	const char *term[] = { NEKOWM_TERM, NULL };
+	nekowm_summon(term);
 
 	while (running && (event = xcb_wait_for_event(connection)))
 	{
@@ -46,6 +90,7 @@ void nekowm_run()
 				{
 					xcb_map_request_event_t *ev = (xcb_map_request_event_t *)event;
 					nekowm_map_window(ev->window);
+					nekowm_show_window(ev->window);
 					break;
 				}
 

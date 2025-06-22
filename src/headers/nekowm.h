@@ -11,8 +11,14 @@ extern xcb_connection_t *connection;
 extern xcb_screen_t *screen;
 
 void nekowm_sigint_handler(int sig);
+
 void nekowm_map_window(xcb_window_t window);
+void nekowm_show_window(xcb_window_t window);
+
 void nekowm_setup();
 void nekowm_run();
+void nekowm_summon(const char *cmd[]);
+
+#include "config.h"
 
 #endif //!NEKOWM_H
