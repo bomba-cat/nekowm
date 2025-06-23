@@ -10,6 +10,7 @@
 
 typedef struct
 {
+	int index;
 	int width, height;
 	int x, y;
 	xcb_window_t window;
@@ -24,6 +25,7 @@ extern xcb_screen_t *screen;
 void nekowm_sigint_handler(int sig);
 
 void nekowm_map_window(xcb_window_t window);
+void nekowm_destroy_window(xcb_window_t window);
 void nekowm_show_window(nekowm_window_t window);
 void nekowm_show_windows();
 

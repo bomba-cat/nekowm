@@ -3,6 +3,8 @@
 uint8_t nekowm_window_count = 0;
 nekowm_window_t *nekowm_windows;
 
+const char *term[] = { NEKOWM_TERM, NULL };
+
 xcb_connection_t *connection;
 xcb_screen_t *screen;
 volatile sig_atomic_t running = 1;
@@ -31,7 +33,7 @@ void nekowm_sigint_handler(int sig)
 
 void nekowm_setup()
 {
-	nekowm_windows = malloc(0);
+	nekowm_windows = NULL;
 
 	uint32_t mask = XCB_CW_EVENT_MASK;
 	uint32_t values[] =
@@ -57,10 +59,11 @@ void nekowm_map_window(xcb_window_t window)
 	nekowm_windows = realloc(nekowm_windows, sizeof(nekowm_window_t) * nekowm_window_count);
 	nekowm_window_t newWindow =
 	{
+		.index = nekowm_window_count,
 		.width = 0,
-		.height = screen->width_in_pixels,
+		.height = screen->height_in_pixels - (NEKOWM_WINDOW_SPACING*2),
 		.x = 0,
-		.y = 0,
+		.y = NEKOWM_WINDOW_SPACING,
 		.window = window,
 	};
 	nekowm_windows[nekowm_window_count-1] = newWindow;
@@ -68,8 +71,37 @@ void nekowm_map_window(xcb_window_t window)
 	for (int i = 0; i < nekowm_window_count; i++)
 	{
 		nekowm_windows[i].x = (screen->width_in_pixels / nekowm_window_count) * i;
-		nekowm_windows[i].width = screen->width_in_pixels / nekowm_window_count;
+		nekowm_windows[i].width = screen->width_in_pixels / nekowm_window_count - (NEKOWM_WINDOW_SPACING * 2);
+		
+		if (nekowm_windows[i].x != 0)
+		{
+			nekowm_windows[i].x += NEKOWM_WINDOW_SPACING/2;
+		} else
+		{
+			nekowm_windows[i].x += NEKOWM_WINDOW_SPACING;
+		}
 	}
+}
+
+void nekowm_destroy_window(xcb_window_t window)
+{
+	  int new_count = nekowm_window_count - 1;
+    nekowm_window_t *new_windows = malloc(sizeof(nekowm_window_t) * new_count);
+
+    int j = 0;
+    for (int i = 0; i < nekowm_window_count; i++)
+    {
+        if (nekowm_windows[i].window == window)
+				{
+					continue;
+				}
+        new_windows[j++] = nekowm_windows[i];
+    }
+
+    free(nekowm_windows);
+		nekowm_windows = new_windows;
+    nekowm_window_count = new_count;
+		//free(new_windows);
 }
 
 void nekowm_show_windows()
@@ -97,7 +129,7 @@ void nekowm_show_window(nekowm_window_t window)
 		.y = values[1],
 		.width = values[2],
 		.height = values[3],
-		.border_width = 0,
+		.border_width = 15,
 		.override_redirect = 0
 	};
 	xcb_send_event(connection, 0, window.window, XCB_EVENT_MASK_STRUCTURE_NOTIFY, (char *)&event);
@@ -109,14 +141,9 @@ void nekowm_run()
 {
 	xcb_generic_event_t *event;
 
-	const char *term[] = { NEKOWM_TERM, NULL };
-	nekowm_summon(term);
-
 	while (running && (event = xcb_wait_for_event(connection)))
 	{
-		uint8_t type = event->response_type & ~0x80;
-
-		switch(type)
+		switch(event->response_type & ~0x80)
 		{
 			case XCB_MAP_REQUEST:
 				{
@@ -127,11 +154,19 @@ void nekowm_run()
 				}
 
 			case XCB_DESTROY_NOTIFY:
-				break;
+				{
+					xcb_destroy_notify_event_t *ev = (xcb_destroy_notify_event_t *)event;
+					nekowm_destroy_window(ev->window);
+					nekowm_show_windows();
+					break;
+				}
 
 			default:
 				break;
 		}
+
+		if (nekowm_window_count == 0)
+			nekowm_summon(term);
 
 		free(event);
 	}
