@@ -6,19 +6,24 @@ PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin
 
 TARGET = nekowm
-SRC = src/nekowm.c
+BUILD_DIR = build
+SRC = src/nekowm.c src/util.c src/window.c
+BIN = $(BUILD_DIR)/$(TARGET)
 
-all: $(TARGET)
+all: $(BUILD_DIR) $(BIN)
 
-$(TARGET): $(SRC)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) $(LDFLAGS)
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(BIN): $(SRC)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 clean:
-	rm -f $(TARGET)
+	rm -rf $(BUILD_DIR)
 
-install: $(TARGET)
+install: $(BIN)
 	mkdir -p $(DESTDIR)$(BINDIR)
-	cp $(TARGET) $(DESTDIR)$(BINDIR)
+	cp $(BIN) $(DESTDIR)$(BINDIR)/$(TARGET)
 
 uninstall:
 	rm -f $(DESTDIR)$(BINDIR)/$(TARGET)
