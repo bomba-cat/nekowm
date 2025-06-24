@@ -1,93 +1,93 @@
-#include "headers/nekowm.h"
+#include "headers/neko.h"
 
-xcb_intern_atom_cookie_t wm_protocols_cookie = xcb_intern_atom(connection, 1, strlen("WM_PROTOCOL"), "WM_PROTOCOLS");
-xcb_intern_atom_cookie_t wm_delete_cookie = xcb_intern_atom(connection, 0, strlen("WM_DELETE_WINDOW"), "WM_DELETE_WINDOW");
+sig_atomic_t running = 1;
 
-xcb_intern_atom_reply_t *wm_protocol_reply = xcb_intern_atom_reply(connection, wm_protocol_cookie, NULL);
-xcb_intern_atom_reply_t *wm_delete_reply = xcb_intern_atom_reply(connection, wm_delete_cookie, NULL);
-
-const char *term[] = { NEKOWM_TERM, NULL };
-volatile sig_atomic_t running = 1;
-
-int nekowm_arguments(int argc, char** argv)
+void neko_die(const char *msg)
 {
-	if(argc == 2 && !strcmp("-v", argv[1]))
-	{
-		printf("NekoWM version 0.1, Copyright © 2025 bombacat, MIT License\nNote: return code 254 is not an error\n");
-		return 254;
-	}
-	if(argc != 1)
-	{
-		printf("NekoWM usage: nekowm [-v]\n");
-		return 255;
-	}
-	return 0;
+	fprintf(stderr, "%s\n", msg);
+	exit(1);
 }
 
-void nekowm_summon(const char *cmd[])
+void neko_spawn(const char *cmd)
 {
-	if (fork() == 0)
+	if(fork() == 0)
 	{
 		if (fork() > 0)
 		{
-			exit(0);
+			exit(1);
 		}
 
 		setsid();
-		execvp(cmd[0], (char *const *)cmd);
-		perror("execvp failed");
+		execlp(cmd, cmd, NULL);
+		perror("execlp");
 		exit(1);
 	}
+	wait(NULL);
 }
 
-void nekowm_setup()
+void neko_add_client(xcb_window_t window)
 {
-	nekowm_windows = NULL;
+	nekos = realloc(nekos, sizeof(neko_client) * (neko_client_count -1));
+	nekos[neko_client_count].window = window;
+	neko_client_count++;
+	neko_arrange();
+}
 
-	uint32_t mask = XCB_CW_EVENT_MASK;
+void neko_remove_client(xcb_window_t window)
+{
+	int j = 0;
+	for (int i = 0; i < neko_client_count; i++)
+	{
+		if(nekos[i].window != window)
+		{
+			nekos[j++] = nekos[i];
+		}
+	}
+	neko_client_count = j;
+	nekos = realloc(nekos, sizeof(neko_client) * neko_client_count);
+	neko_arrange();
+}
+
+void neko_setup()
+{
 	uint32_t values[] =
 	{
-		XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT |
-		XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY |
-		XCB_EVENT_MASK_ENTER_WINDOW |
-		XCB_EVENT_MASK_LEAVE_WINDOW |
-		XCB_EVENT_MASK_STRUCTURE_NOTIFY |
-		XCB_EVENT_MASK_PROPERTY_CHANGE
-	};
-
-	xcb_change_window_attributes(connection, screen->root, mask, values);
-	xcb_flush(connection);
+    XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY |
+    XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW |
+    XCB_EVENT_MASK_STRUCTURE_NOTIFY | XCB_EVENT_MASK_PROPERTY_CHANGE
+  };
+  xcb_change_window_attributes(connection, screen->root, XCB_CW_EVENT_MASK, values);
+  xcb_flush(connection);
 }
 
-void nekowm_run()
+void neko_run()
 {
-  xcb_generic_event_t *event;
-
-	nekowm_summon(term);
-
-  while (running && (event = xcb_wait_for_event(connection)))
-  {
-    switch (event->response_type & ~0x80)
-    {
+  xcb_generic_event_t *ev;
+  neko_spawn(TERM);
+  neko_spawn(TERM);
+  while (running && (ev = xcb_wait_for_event(connection)))
+	{
+    switch (ev->response_type & ~0x80)
+		{
       case XCB_MAP_REQUEST:
-      {
-        xcb_map_request_event_t *ev = (xcb_map_request_event_t *)event;
-        nekowm_map_window(ev->window);
-        nekowm_show_windows();
+				{
+        xcb_map_request_event_t *e = (xcb_map_request_event_t *)ev;
+        xcb_map_window(connection, e->window);
+        neko_add_client(e->window);
         break;
       }
-
       case XCB_DESTROY_NOTIFY:
-      {
-        xcb_destroy_notify_event_t *ev = (xcb_destroy_notify_event_t *)event;
-        nekowm_destroy_window(ev->window);
-				nekowm_show_windows();
+				{
+        xcb_destroy_notify_event_t *e = (xcb_destroy_notify_event_t *)ev;
+        neko_remove_client(e->window);
         break;
       }
-
-      default:
-        break;
     }
-    free(event);
+    free(ev);
   }
+}
+
+void neko_cleanup(int)
+{
+	running = 0;
 }
