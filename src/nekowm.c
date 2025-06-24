@@ -6,9 +6,8 @@ nekowm_window_t *nekowm_windows;
 xcb_connection_t *connection;
 xcb_screen_t *screen;
 
-void nekowm_sigint_handler(int sig)
+void nekowm_sigint_handler(int)
 {
-	printf("NekoWM recieved %d", sig);
 	running = 0;
 }
 

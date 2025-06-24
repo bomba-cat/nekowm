@@ -1,5 +1,11 @@
 #include "headers/nekowm.h"
 
+xcb_intern_atom_cookie_t wm_protocols_cookie = xcb_intern_atom(connection, 1, strlen("WM_PROTOCOL"), "WM_PROTOCOLS");
+xcb_intern_atom_cookie_t wm_delete_cookie = xcb_intern_atom(connection, 0, strlen("WM_DELETE_WINDOW"), "WM_DELETE_WINDOW");
+
+xcb_intern_atom_reply_t *wm_protocol_reply = xcb_intern_atom_reply(connection, wm_protocol_cookie, NULL);
+xcb_intern_atom_reply_t *wm_delete_reply = xcb_intern_atom_reply(connection, wm_delete_cookie, NULL);
+
 const char *term[] = { NEKOWM_TERM, NULL };
 volatile sig_atomic_t running = 1;
 
@@ -57,6 +63,8 @@ void nekowm_run()
 {
   xcb_generic_event_t *event;
 
+	nekowm_summon(term);
+
   while (running && (event = xcb_wait_for_event(connection)))
   {
     switch (event->response_type & ~0x80)
@@ -80,9 +88,6 @@ void nekowm_run()
       default:
         break;
     }
-		if(nekowm_window_count == 0)
-			nekowm_summon(term);
-
     free(event);
   }
 }
