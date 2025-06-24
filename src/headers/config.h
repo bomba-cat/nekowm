@@ -1,10 +1,8 @@
-// Style
-#define NEKOWM_WINDOW_SPACING 15
+#ifndef CONFIG_H
+#define CONFIG_H
 
-// Keybinds
-#define NEKOWM_LAUNCH_TERM "alt enter"
-#define NEKOWM_LAUNCH_LAUNCHER "alt d"
+#define TERM "kitty"
+#define BORDER 2
+#define GAP 15
 
-// Executables
-#define NEKOWM_TERM "/bin/kitty"
-#define NEKOWM_LAUNCHER "/bin/dmenu_run"
+#endif //!CONFIG_H
