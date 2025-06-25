@@ -27,7 +27,7 @@ void neko_spawn(const char *cmd)
 
 void neko_add_client(xcb_window_t window)
 {
-	nekos = realloc(nekos, sizeof(neko_client) * (neko_client_count -1));
+	nekos = realloc(nekos, sizeof(neko_client) * (neko_client_count + 1));
 	nekos[neko_client_count].window = window;
 	neko_client_count++;
 	neko_arrange();
@@ -63,27 +63,9 @@ void neko_setup()
 void neko_run()
 {
   xcb_generic_event_t *ev;
-  neko_spawn(TERM);
-  neko_spawn(TERM);
   while (running && (ev = xcb_wait_for_event(connection)))
 	{
-    switch (ev->response_type & ~0x80)
-		{
-      case XCB_MAP_REQUEST:
-				{
-        xcb_map_request_event_t *e = (xcb_map_request_event_t *)ev;
-        xcb_map_window(connection, e->window);
-        neko_add_client(e->window);
-        break;
-      }
-      case XCB_DESTROY_NOTIFY:
-				{
-        xcb_destroy_notify_event_t *e = (xcb_destroy_notify_event_t *)ev;
-        neko_remove_client(e->window);
-        break;
-      }
-    }
-    free(ev);
+    neko_handle_events(ev);
   }
 }
 

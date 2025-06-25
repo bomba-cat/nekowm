@@ -1,0 +1,69 @@
+#include "headers/neko.h"
+
+void neko_handle_focus_in(xcb_generic_event_t *event)
+{
+  xcb_focus_in_event_t *e = (xcb_focus_in_event_t *)event;
+  for (int i = 0; i < neko_client_count; i++)
+  {
+    if (nekos[i].window != e->event)
+    {
+      continue;
+    }
+    neko_set_focus(&nekos[i], true);
+  }
+}
+
+void neko_handle_focus_out(xcb_generic_event_t *event)
+{
+  xcb_focus_in_event_t *e = (xcb_focus_in_event_t *)event;
+  for (int i = 0; i < neko_client_count; i++)
+  {
+    if (nekos[i].window != e->event)
+    {
+      continue;
+    }
+    neko_set_focus(&nekos[i], false);
+  }
+}
+
+void neko_handle_map(xcb_generic_event_t *event)
+{
+  xcb_map_request_event_t *e = (xcb_map_request_event_t *)event;
+  xcb_map_window(connection, e->window);
+  neko_add_client(e->window);
+}
+
+void neko_handle_destroy(xcb_generic_event_t *event)
+{
+  xcb_destroy_notify_event_t *e = (xcb_destroy_notify_event_t *)event;
+  neko_remove_client(e->window);
+}
+
+void neko_handle_events(xcb_generic_event_t *event)
+{
+	switch (event->response_type & ~0x80)
+		{
+      case XCB_MAP_REQUEST:
+				{
+          neko_handle_map(event);
+          break;
+        }
+      case XCB_DESTROY_NOTIFY:
+				{
+          neko_handle_destroy(event);
+          break;
+        }
+      case XCB_FOCUS_IN:
+        {
+          neko_handle_focus_in(event);
+          break;
+        }
+      case XCB_FOCUS_OUT:
+        {
+          neko_handle_focus_out(event);
+          break;
+        }
+    }
+		if (neko_client_count == 0) neko_spawn(TERM);
+    free(event);
+}

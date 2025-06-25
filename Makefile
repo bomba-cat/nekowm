@@ -7,7 +7,7 @@ BINDIR = $(PREFIX)/bin
 
 TARGET = nekowm
 BUILD_DIR = build
-SRC = src/window.c src/util.c src/neko.c
+SRC = src/window.c src/event.c src/util.c src/neko.c
 BIN = $(BUILD_DIR)/$(TARGET)
 
 all: $(BUILD_DIR) $(BIN)

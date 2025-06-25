@@ -3,6 +3,16 @@
 neko_client *nekos = NULL;
 int neko_client_count = 0;
 
+void neko_set_focus_color(neko_client client)
+{
+	return;
+}
+
+void neko_set_focus(neko_client *client, bool focused)
+{
+	client->focused = focused;
+}
+
 void neko_arrange()
 {
 	if (neko_client_count == 0)
@@ -19,8 +29,10 @@ void neko_arrange()
 		client->width = window_width - 2 * GAP;
 		client->height = screen->height_in_pixels - 2 * GAP;
 
-		uint32_t values[4] = { client->x, client->y, client->width, client->height };
-		uint32_t mask = XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y | XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT;
+		uint32_t values[5] = { client->x, client->y, client->width, client->height, BORDER };
+		uint32_t mask = XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y |
+			XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT |
+			XCB_CONFIG_WINDOW_BORDER_WIDTH;
 		xcb_configure_window(connection, client->window, mask, values);
 	}
 	xcb_flush(connection);
