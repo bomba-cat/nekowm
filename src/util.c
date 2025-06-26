@@ -29,6 +29,7 @@ void neko_add_client(xcb_window_t window)
 {
 	nekos = realloc(nekos, sizeof(neko_client) * (neko_client_count + 1));
 	nekos[neko_client_count].window = window;
+	nekos[neko_client_count].split = !nekos[(neko_client_count > 1) ? neko_client_count-1 : neko_client_count].split;
 	neko_client_count++;
 	neko_arrange();
 }

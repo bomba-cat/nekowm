@@ -30,15 +30,45 @@ void neko_arrange()
 		return;
 	}
 
-	int window_width = screen->width_in_pixels / neko_client_count;
+	int x = 0, y = 0;
+	int w = screen->width_in_pixels, h = screen->height_in_pixels;
+
 	for (int i = 0; i < neko_client_count; i++)
 	{
 		neko_client *client = &nekos[i];
-		client->x = i * window_width + GAP;
-		client->y = GAP;
-		client->width = window_width - 2 * GAP;
-		client->height = screen->height_in_pixels - 2 * GAP;
 
+		client->x = x + GAP;
+		client->y = y + GAP;
+
+		if (client->split)
+		{
+			client->width = (w / 2) - 2 * GAP - 2 * BORDER;
+			client->height = h - 2 * GAP - 2 * BORDER;
+			if (i == neko_client_count-1 && i > 0)
+			{
+				client->width = nekos[i-1].width;
+			} else if(neko_client_count == 1)
+			{
+				client->width = w - 2 * GAP - 2 * BORDER;
+			}
+
+			x += w / 2;
+			w /= 2;
+		} else
+		{
+			client->width = w - 2 * GAP - 2 * BORDER;
+			client->height = (h / 2) - 2 * GAP - 2 * BORDER;
+			if (i == neko_client_count-1 && i > 0)
+			{
+				client->height = nekos[i-1].height;
+			} else if(neko_client_count == 1)
+			{
+				client->height = h - 2 * GAP - 2 * BORDER;
+			}
+
+			y += h / 2;
+			h /= 2;
+		}
 		uint32_t values[5] = { client->x, client->y, client->width, client->height, BORDER };
 		uint32_t mask = XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y |
 			XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT |
