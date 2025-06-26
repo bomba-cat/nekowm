@@ -44,6 +44,7 @@ void neko_arrange()
 			XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT |
 			XCB_CONFIG_WINDOW_BORDER_WIDTH;
 		xcb_configure_window(connection, client->window, mask, values);
+		xcb_flush(connection);
 
 		uint32_t vals[5];
 		vals[0] = XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_FOCUS_CHANGE;
@@ -51,5 +52,4 @@ void neko_arrange()
 				XCB_CW_EVENT_MASK, vals);
 		neko_set_focus(client->window);
 	}
-	xcb_flush(connection);
 }
