@@ -3,27 +3,19 @@
 void neko_handle_focus_in(xcb_generic_event_t *event)
 {
   xcb_focus_in_event_t *e = (xcb_focus_in_event_t *)event;
-  for (int i = 0; i < neko_client_count; i++)
-  {
-    if (nekos[i].window != e->event)
-    {
-      continue;
-    }
-    neko_set_focus(&nekos[i], true);
-  }
+  neko_set_focus_color(e->event, true);
 }
 
 void neko_handle_focus_out(xcb_generic_event_t *event)
 {
   xcb_focus_in_event_t *e = (xcb_focus_in_event_t *)event;
-  for (int i = 0; i < neko_client_count; i++)
-  {
-    if (nekos[i].window != e->event)
-    {
-      continue;
-    }
-    neko_set_focus(&nekos[i], false);
-  }
+  neko_set_focus_color(e->event, false);
+}
+
+void neko_handle_enter_notify(xcb_generic_event_t *event)
+{
+  xcb_enter_notify_event_t *e = ( xcb_enter_notify_event_t *)event;
+	neko_set_focus(e->event);
 }
 
 void neko_handle_map(xcb_generic_event_t *event)
@@ -61,6 +53,11 @@ void neko_handle_events(xcb_generic_event_t *event)
       case XCB_FOCUS_OUT:
         {
           neko_handle_focus_out(event);
+          break;
+        }
+      case XCB_ENTER_NOTIFY:
+        {
+          neko_handle_enter_notify(event);
           break;
         }
     }

@@ -3,9 +3,9 @@
 
 #define TERM "kitty"
 #define LAUNCHER "dmenu_run"
-#define BORDER 2
+#define BORDER 4
 #define FOCUSED 0xf200ff
-#define UNFOCUSED 0xffffff
+#define UNFOCUSED 0x440074
 #define GAP 15
 
 #define LAUNCH_TERM "alt enter"

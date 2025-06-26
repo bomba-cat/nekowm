@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
@@ -15,7 +16,6 @@ typedef struct
 {
 	xcb_window_t window;
 	int x, y, width, height;
-	bool focused;
 	bool split; /* true: l/r, false: u/d */
 } neko_client;
 
@@ -29,12 +29,13 @@ extern sig_atomic_t running;
 void neko_handle_events(xcb_generic_event_t *event);
 void neko_handle_focus_in(xcb_generic_event_t *event);
 void neko_handle_focus_out(xcb_generic_event_t *event);
+void neko_handle_enter_notify(xcb_generic_event_t *event);
 void neko_handle_destroy(xcb_generic_event_t *event);
 void neko_handle_map(xcb_generic_event_t *event);
 
 /* window */
-void neko_set_focus_color(neko_client client);
-void neko_set_focus(neko_client *client, bool focused);
+void neko_set_focus_color(xcb_window_t window, bool focus);
+void neko_set_focus(xcb_drawable_t window);
 void neko_arrange();
 
 /* util */
