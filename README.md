@@ -18,3 +18,10 @@ make install
 ```bash
 make uninstall
 ```
+## Clean
+```bash
+make clean
+```
+
+# License
+NekoWM uses the [MIT License](LICENSE)
