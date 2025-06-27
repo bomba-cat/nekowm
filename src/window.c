@@ -40,7 +40,7 @@ void neko_arrange()
 		client->x = x + GAP;
 		client->y = y + GAP;
 
-		if (client->split)
+		if (client->split == NEKO_HORIZONTAL)
 		{
 			client->width = (w / 2) - 2 * GAP - 2 * BORDER;
 			client->height = h - 2 * GAP - 2 * BORDER;

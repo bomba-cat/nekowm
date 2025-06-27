@@ -1,5 +1,11 @@
 #include "headers/neko.h"
 
+void neko_handle_key_press(xcb_generic_event_t *event)
+{
+  UNUSED(event);
+  return;
+}
+
 void neko_handle_focus_in(xcb_generic_event_t *event)
 {
   xcb_focus_in_event_t *e = (xcb_focus_in_event_t *)event;
@@ -62,6 +68,11 @@ void neko_handle_events(xcb_generic_event_t *event)
       case XCB_ENTER_NOTIFY:
         {
           neko_handle_enter_notify(event);
+          break;
+        }
+      case XCB_KEY_PRESS:
+        {
+          neko_handle_key_press(event);
           break;
         }
     }

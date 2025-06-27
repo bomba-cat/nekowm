@@ -12,11 +12,20 @@
 
 #include "config.h"
 
+/* found this in xwm */
+#define UNUSED(x) (void)(x)
+
+typedef enum
+{
+	NEKO_VERTICAL,
+	NEKO_HORIZONTAL,
+} neko_split;
+
 typedef struct
 {
 	xcb_window_t window;
 	int x, y, width, height;
-	bool split; /* true: l/r, false: u/d */
+	neko_split split;
 } neko_client;
 
 extern xcb_connection_t *connection;
@@ -32,6 +41,7 @@ void neko_handle_focus_out(xcb_generic_event_t *event);
 void neko_handle_enter_notify(xcb_generic_event_t *event);
 void neko_handle_destroy(xcb_generic_event_t *event);
 void neko_handle_map(xcb_generic_event_t *event);
+void neko_handle_key_press(xcb_generic_event_t *event);
 
 /* window */
 void neko_set_focus_color(xcb_window_t window, bool focus);
