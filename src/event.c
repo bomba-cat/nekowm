@@ -22,6 +22,10 @@ void neko_handle_map(xcb_generic_event_t *event)
 {
   xcb_map_request_event_t *e = (xcb_map_request_event_t *)event;
   xcb_map_window(connection, e->window);
+  
+  uint32_t mask = XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_FOCUS_CHANGE;
+  xcb_change_window_attributes(connection, e->window, XCB_CW_EVENT_MASK, &mask);
+  
   neko_add_client(e->window);
 }
 

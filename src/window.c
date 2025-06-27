@@ -18,8 +18,8 @@ void neko_set_focus(xcb_drawable_t window)
 {
 	if ((window != 0) && (window != screen->root))
 	{
-		xcb_set_input_focus(connection, XCB_INPUT_FOCUS_POINTER_ROOT, window,
-			XCB_CURRENT_TIME);
+		xcb_set_input_focus(connection, XCB_INPUT_FOCUS_POINTER_ROOT, window, XCB_CURRENT_TIME);
+		xcb_flush(connection);
 	}
 }
 
@@ -74,12 +74,6 @@ void neko_arrange()
 			XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT |
 			XCB_CONFIG_WINDOW_BORDER_WIDTH;
 		xcb_configure_window(connection, client->window, mask, values);
-		xcb_flush(connection);
-
-		uint32_t vals[5];
-		vals[0] = XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_FOCUS_CHANGE;
-		xcb_change_window_attributes_checked(connection, client->window,
-				XCB_CW_EVENT_MASK, vals);
-		neko_set_focus(client->window);
 	}
+	xcb_flush(connection);
 }
