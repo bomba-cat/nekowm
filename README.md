@@ -8,6 +8,7 @@ If you add a window to the stack, it will take the previous window and split it'
 
 ---
 **Example:**
+
 Spawn 2 windows:
 ```
 window1: 50%
