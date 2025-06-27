@@ -1,29 +1,36 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -O3
-LDFLAGS = -lxcb
+LDFLAGS = -lxcb -lxcb-keysyms
 
 PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin
 
 TARGET = nekowm
 BUILD_DIR = build
-SRC = src/window.c src/util.c src/neko.c
+SRC = src/window.c src/event.c src/util.c src/neko.c
 BIN = $(BUILD_DIR)/$(TARGET)
+
+.PHONY: all clean install uninstall
 
 all: $(BUILD_DIR) $(BIN)
 
 $(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+	@echo "Creating build/ directory"
+	@mkdir -p $(BUILD_DIR)
 
 $(BIN): $(SRC)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	@echo "Compiling src: "$^
+	@$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 clean:
-	rm -rf $(BUILD_DIR)
+	@echo "Removing build/ directory"
+	@rm -rf $(BUILD_DIR)
 
-install: $(BIN)
-	mkdir -p $(DESTDIR)$(BINDIR)
-	cp $(BIN) $(DESTDIR)$(BINDIR)/$(TARGET)
+install: all
+	@echo "Installing into "$(DESTDIR)$(BINDIR)
+	@mkdir -p $(DESTDIR)$(BINDIR)
+	@cp $(BIN) $(DESTDIR)$(BINDIR)/$(TARGET)
 
 uninstall:
-	rm -f $(DESTDIR)$(BINDIR)/$(TARGET)
+	@echo "Uninstalling "$(DESTDIR)$(BINDIR)/$(TARGET)
+	@rm -f $(DESTDIR)$(BINDIR)/$(TARGET)

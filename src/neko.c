@@ -5,15 +5,15 @@ xcb_screen_t *screen = NULL;
 
 int main(int argc, char** argv)
 {
-	if(argc == 2 && !strcmp("-v", argv[1]))
+	if(argc == 2 && (!strcmp("-v", argv[1]) || !strcmp("--version", argv[1])))
 	{
-		printf("NekoWM version 0.1 revision 1, Copyright © 2025 bombacat, MIT License\n");
+		printf("NekoWM version 0.1, Copyright © 2025 bombacat, MIT License\n");
 		return EXIT_SUCCESS;
 	}
 
 	if(argc == 2)
 	{
-		printf("Usage: neko [-v]\n");
+		printf("Usage: neko [-v|--version]\n");
 		return EXIT_FAILURE;
 	}
 

@@ -4,8 +4,7 @@ A window manager with no special features, but at least it compiles fast
 # Building
 ## Dependencies
 - libxcb
-- gcc
-- xorg
+- gcc (Change `Makefile` for a different compiler)
 - make
 ## Compile
 ```bash
@@ -19,3 +18,10 @@ make install
 ```bash
 make uninstall
 ```
+## Clean
+```bash
+make clean
+```
+
+# License
+NekoWM uses the [MIT License](LICENSE)

@@ -1,5 +1,6 @@
 #include "headers/neko.h"
 
+xcb_key_symbols_t *keysyms = NULL;
 sig_atomic_t running = 1;
 
 void neko_die(const char *msg)
@@ -27,8 +28,9 @@ void neko_spawn(const char *cmd)
 
 void neko_add_client(xcb_window_t window)
 {
-	nekos = realloc(nekos, sizeof(neko_client) * (neko_client_count -1));
+	nekos = realloc(nekos, sizeof(neko_client) * (neko_client_count + 1));
 	nekos[neko_client_count].window = window;
+	nekos[neko_client_count].split = !nekos[(neko_client_count > 1) ? neko_client_count-1 : neko_client_count].split;
 	neko_client_count++;
 	neko_arrange();
 }
@@ -58,32 +60,37 @@ void neko_setup()
   };
   xcb_change_window_attributes(connection, screen->root, XCB_CW_EVENT_MASK, values);
   xcb_flush(connection);
+
+	keysyms = xcb_key_symbols_alloc(connection);
+
+	xcb_keycode_t *keycodes = xcb_key_symbols_get_keycode(keysyms, TERM_KEY);
+	if (keycodes)
+	{
+		for (xcb_keycode_t *code = keycodes; *code != 0; ++code)
+		{
+			xcb_grab_key(connection, 1, screen->root,	MOD, *code,	XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+		}
+		free(keycodes);
+	}
+
+	keycodes = xcb_key_symbols_get_keycode(keysyms, LAUNCHER_KEY);
+	if (keycodes)
+	{
+		for (xcb_keycode_t *code = keycodes; *code != 0; ++code)
+		{
+			xcb_grab_key(connection, 1, screen->root,	MOD, *code,	XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+		}
+		free(keycodes);
+	}
+	xcb_flush(connection);
 }
 
 void neko_run()
 {
   xcb_generic_event_t *ev;
-  neko_spawn(TERM);
-  neko_spawn(TERM);
   while (running && (ev = xcb_wait_for_event(connection)))
 	{
-    switch (ev->response_type & ~0x80)
-		{
-      case XCB_MAP_REQUEST:
-				{
-        xcb_map_request_event_t *e = (xcb_map_request_event_t *)ev;
-        xcb_map_window(connection, e->window);
-        neko_add_client(e->window);
-        break;
-      }
-      case XCB_DESTROY_NOTIFY:
-				{
-        xcb_destroy_notify_event_t *e = (xcb_destroy_notify_event_t *)ev;
-        neko_remove_client(e->window);
-        break;
-      }
-    }
-    free(ev);
+    neko_handle_events(ev);
   }
 }
 
