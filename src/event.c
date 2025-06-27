@@ -2,7 +2,23 @@
 
 void neko_handle_key_press(xcb_generic_event_t *event)
 {
-  UNUSED(event);
+  if (!keysyms)
+  {
+    return;
+  }
+
+  xcb_key_press_event_t *e = (xcb_key_press_event_t *)event;
+
+  xcb_keysym_t keysym = xcb_key_symbols_get_keysym(keysyms, e->detail, 0);
+
+  if((e->state & MOD) && keysym == TERM_KEY)
+  {
+    neko_spawn(TERM);
+  }
+  if((e->state & MOD) && keysym == LAUNCHER_KEY)
+  {
+    neko_spawn(LAUNCHER);
+  }
   return;
 }
 
@@ -76,6 +92,5 @@ void neko_handle_events(xcb_generic_event_t *event)
           break;
         }
     }
-		if (neko_client_count == 0) neko_spawn(TERM);
     free(event);
 }

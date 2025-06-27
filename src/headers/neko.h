@@ -2,6 +2,9 @@
 #define NEKO_H
 
 #include <xcb/xcb.h>
+#include <xcb/xcb_keysyms.h>
+#include <X11/keysym.h>
+#include <X11/keysymdef.h>
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -32,6 +35,7 @@ extern xcb_connection_t *connection;
 extern xcb_screen_t *screen;
 extern neko_client *nekos;
 extern int neko_client_count;
+extern xcb_key_symbols_t *keysyms;
 extern sig_atomic_t running;
 
 /* event */

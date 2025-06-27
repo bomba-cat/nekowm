@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -O3
-LDFLAGS = -lxcb
+LDFLAGS = -lxcb -lxcb-keysyms
 
 PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin

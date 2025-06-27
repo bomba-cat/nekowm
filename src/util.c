@@ -1,5 +1,6 @@
 #include "headers/neko.h"
 
+xcb_key_symbols_t *keysyms = NULL;
 sig_atomic_t running = 1;
 
 void neko_die(const char *msg)
@@ -59,6 +60,29 @@ void neko_setup()
   };
   xcb_change_window_attributes(connection, screen->root, XCB_CW_EVENT_MASK, values);
   xcb_flush(connection);
+
+	keysyms = xcb_key_symbols_alloc(connection);
+
+	xcb_keycode_t *keycodes = xcb_key_symbols_get_keycode(keysyms, TERM_KEY);
+	if (keycodes)
+	{
+		for (xcb_keycode_t *code = keycodes; *code != 0; ++code)
+		{
+			xcb_grab_key(connection, 1, screen->root,	MOD, *code,	XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+		}
+		free(keycodes);
+	}
+
+	keycodes = xcb_key_symbols_get_keycode(keysyms, LAUNCHER_KEY);
+	if (keycodes)
+	{
+		for (xcb_keycode_t *code = keycodes; *code != 0; ++code)
+		{
+			xcb_grab_key(connection, 1, screen->root,	MOD, *code,	XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+		}
+		free(keycodes);
+	}
+	xcb_flush(connection);
 }
 
 void neko_run()

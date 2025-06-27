@@ -13,7 +13,8 @@
  * Mod1 = Alt
  * Mod4 = Super
  */
-#define EXEC_TERM "Mod1 Return"
-#define EXEC_LAUNCHER "Mod1 d"
+#define MOD XCB_MOD_MASK_1
+#define TERM_KEY XK_Return
+#define LAUNCHER_KEY XK_D
 
 #endif /* !CONFIG_H */
