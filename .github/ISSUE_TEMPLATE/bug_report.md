@@ -27,3 +27,16 @@ Paste relevant logs here. If there's anything from `dmesg`, stderr, or debug out
 
 <details>
 <summary>Click to expand logs</summary>
+</details>
+
+## Did it work in a previous version?
+
+- [ ] Yes
+- [ ] No
+- [ ] Not sure
+
+## Checklist
+
+- [ ] I am using the latest version of NekoWM from the `dev` branch
+- [ ] I have searched for existing issues
+- [ ] I can reproduce this consistently
