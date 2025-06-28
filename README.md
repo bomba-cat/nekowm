@@ -1,54 +1,71 @@
-# nekowm
+# NekoWM
+
 NekoWM is a lightweight, stack-like tiling window manager with split-based layouts.
 
 ---
-**Idea is following:**
+### How it works
 
-If you add a window to the stack, it will take the previous window and split it's space with that window.
+Newly spawned window splits space with the previously added window in the current stack. With each new window recursively halving the space of the one before it.
 
 ---
-**Example:**
+### Example
 
 Spawn 2 windows:
 ```
 window1: 50%
 window2: 50%
 ```
-Spawn another window:
+
+Spawn another:
 ```
 window1: 50%
 window2: 25%
 window3: 25%
 ```
-Spawn one more window:
+
+Spawn one more:
 ```
 window1: 50%
-window2: 25%:
-window3: 17.5%
-window4: 17.5%
+window2: 25%
+window3: 12.5%
+window4: 12.5%
 ```
 
-# Building
-## Dependencies
-- libxcb
-- gcc (Change `Makefile` for a different compiler)
-- make
-## Compile
-```bash
+# Philosophy
+
+NekoWM is designed to be a single, self-contained binary with:
+- No runtime dependencies (beyond X11 libraries)
+- No config files
+- No external daemons
+
+## Building
+### Dependencies
+- `libxcb`
+- `Xlib` (only for keysyms, see [Xlib note](#xlib))
+- `gcc` (edit `Makefile` to use another compiler)
+- `make`
+
+### Compile
+```sh
 make
-```
-## Install
-```bash
+````
+### Install
+```sh
 make install
 ```
-## Uninstall
-```bash
+### Uninstall
+```sh
 make uninstall
 ```
-## Clean
-```bash
+### Clean
+```sh
 make clean
 ```
 
-# License
-NekoWM uses the [MIT License](LICENSE)
+## Xlib
+Xlib is only used for the `keysym` macros (`XK_*`). You can avoid this dependency by replacing the macros with raw keycode values (e.g., `38`, `40`, etc.).
+
+To disable Xlib entirely, edit `src/neko.h` and `Makefile`.
+
+## License
+NekoWM is licensed under the [MIT License](LICENSE).
