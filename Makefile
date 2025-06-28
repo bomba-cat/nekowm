@@ -31,6 +31,17 @@ install: all
 	@mkdir -p $(DESTDIR)$(BINDIR)
 	@cp $(BIN) $(DESTDIR)$(BINDIR)/$(TARGET)
 
+session:
+	@echo "Installing NekoWM session file to /usr/share/xsessions"
+	@mkdir -p /usr/share/xsessions
+	@echo "[Desktop Entry]" > /usr/share/xsessions/nekowm.desktop
+	@echo "Name=NekoWM" >> /usr/share/xsessions/nekowm.desktop
+	@echo "Comment=Minimal tiling window manager" >> /usr/share/xsessions/nekowm.desktop
+	@echo "Exec=$(BINDIR)/$(TARGET)" >> /usr/share/xsessions/nekowm.desktop
+	@echo "TryExec=$(BINDIR)/$(TARGET)" >> /usr/share/xsessions/nekowm.desktop
+	@echo "Type=Application" >> /usr/share/xsessions/nekowm.desktop
+	@echo "DesktopNames=nekowm" >> /usr/share/xsessions/nekowm.desktop
+
 uninstall:
 	@echo "Uninstalling "$(DESTDIR)$(BINDIR)/$(TARGET)
 	@rm -f $(DESTDIR)$(BINDIR)/$(TARGET)
