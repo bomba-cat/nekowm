@@ -1,0 +1,115 @@
+name: NekoWM Makefile
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    name: Test build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          libxcb1-dev \
+          libxcb-util0-dev \
+          libxcb-keysyms1-dev \
+          x11proto-dev
+
+    - name: Build NekoWM
+      run: make
+
+  install:
+    name: Test install
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          libxcb1-dev \
+          libxcb-util0-dev \
+          libxcb-keysyms1-dev \
+          x11proto-dev
+
+    - name: Build and install
+      run: |
+        make
+        sudo make install
+        test -f /usr/local/bin/nekowm
+
+  uninstall:
+    name: Test uninstall
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          libxcb1-dev \
+          libxcb-util0-dev \
+          libxcb-keysyms1-dev \
+          x11proto-dev
+
+    - name: Build, install, uninstall
+      run: |
+        make
+        sudo make install
+        sudo make uninstall
+        if [ -f /usr/local/bin/nekowm ]; then exit 1; fi
+
+  clean:
+    name: Test clean
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          libxcb1-dev \
+          libxcb-util0-dev \
+          libxcb-keysyms1-dev \
+          x11proto-dev
+
+    - name: Build and clean
+      run: |
+        make
+        make clean
+        test ! -d build
+
+  session:
+    name: Test session
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          libxcb1-dev \
+          libxcb-util0-dev \
+          libxcb-keysyms1-dev \
+          x11proto-dev
+
+    - name: Run make session
+      run: |
+        sudo make session
+        test -f /usr/share/xsessions/nekowm.desktop

@@ -38,6 +38,9 @@ extern int neko_client_count;
 extern xcb_key_symbols_t *keysyms;
 extern sig_atomic_t running;
 
+/* keyboard */
+
+
 /* event */
 void neko_handle_events(xcb_generic_event_t *event);
 void neko_handle_focus_in(xcb_generic_event_t *event);
