@@ -61,6 +61,11 @@ make uninstall
 ```sh
 make clean
 ```
+### Session
+This creates a desktop session entry
+```sh
+make session
+```
 
 ## Xlib
 Xlib is only used for the `keysym` macros (`XK_*`). You can avoid this dependency by replacing the macros with raw keycode values (e.g., `38`, `40`, etc.).
