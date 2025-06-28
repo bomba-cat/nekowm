@@ -10,14 +10,14 @@
  * MOD1 = Alt
  * MOD4 = Super
  */
-#define MOD 						XCB_MOD_MASK_1
+#define MOD1 						XCB_MOD_MASK_1
 #define MOD2						XCB_MOD_MASK_SHIFT
 #define MOD3						XCB_MOD_MASK_CONTROL
 #define MOD4						XCB_MOD_MASK_4
 static const neko_keybind keybinds[] =
 {
-	{ MOD, XK_Return, "kitty" },
-	{ MOD | MOD2, XK_Return, "dmenu_run" },
+	{ MOD1, XK_Return, "kitty" },
+	{ MOD1 | MOD2, XK_Return, "dmenu_run" },
 };
 
 #endif /* !CONFIG_H */
