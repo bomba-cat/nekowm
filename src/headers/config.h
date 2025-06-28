@@ -6,16 +6,18 @@
 #define UNFOCUSED 			0x440074
 #define GAP 						15
 
-#define TERM 						"kitty"
-#define LAUNCHER 				"dmenu_run"
-
 /*
- * Mod1 = Alt
- * Mod4 = Super
+ * MOD1 = Alt
+ * MOD4 = Super
  */
 #define MOD 						XCB_MOD_MASK_1
-#define SPLIT_KEY 			XK_S
-#define TERM_KEY 				XK_Return
-#define LAUNCHER_KEY 		XK_D
+#define MOD2						XCB_MOD_MASK_SHIFT
+#define MOD3						XCB_MOD_MASK_CONTROL
+#define MOD4						XCB_MOD_MASK_4
+static const neko_keybind keybinds[] =
+{
+	{ MOD, XK_Return, "kitty" },
+	{ MOD | MOD2, XK_Return, "dmenu_run" },
+};
 
 #endif /* !CONFIG_H */

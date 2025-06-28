@@ -13,8 +13,6 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-#include "config.h"
-
 /* found this in xwm */
 #define UNUSED(x) (void)(x)
 
@@ -26,10 +24,19 @@ typedef enum
 
 typedef struct
 {
+	uint16_t mod;
+	xcb_keysym_t key;
+	char *command;
+} neko_keybind;
+
+typedef struct
+{
 	xcb_window_t window;
 	int x, y, width, height;
 	neko_split split;
 } neko_client;
+
+#include "config.h"
 
 extern xcb_connection_t *connection;
 extern xcb_screen_t *screen;
@@ -39,7 +46,8 @@ extern xcb_key_symbols_t *keysyms;
 extern sig_atomic_t running;
 
 /* keyboard */
-
+void neko_grab_keybinds();
+void neko_read_keybinds(xcb_key_press_event_t *e);
 
 /* event */
 void neko_handle_events(xcb_generic_event_t *event);
