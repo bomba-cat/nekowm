@@ -1,38 +1,29 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
+name: Bug Report
+about: Report a reproducible issue with NekoWM
+title: "[BUG] <short description here>"
+labels: bug
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## Description
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+A clear and concise description of what the bug is and what you expected to happen.
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+## Version
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+- NekoWM version/commit: `...`
+- Distro and launch method (startx, greeter, etc.): `...`
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+## Steps to Reproduce
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+1. ...
+2. ...
+3. ...
+4. ...
 
-**Additional context**
-Add any other context about the problem here.
+## Logs / Output
+
+Paste relevant logs here. If there's anything from `dmesg`, stderr, or debug output, include that.
+
+<details>
+<summary>Click to expand logs</summary>
