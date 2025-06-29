@@ -17,7 +17,7 @@
 static const neko_keybind keybinds[] =
 {
 	{ MOD1, XK_Return, "kitty" },
-	{ MOD1 | MOD2, XK_Return, "dmenu_run" },
+	{ MOD1 | MOD2, XK_Return, "dmenu_run -nb '#ffe6f0' -nf '#550033' -sb '#ff99cc' -sf '#ffffff' -fn 'monospace-10'" },
 };
 
 #endif /* !CONFIG_H */

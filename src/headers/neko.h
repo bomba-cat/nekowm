@@ -24,6 +24,12 @@ typedef enum
 
 typedef struct
 {
+	char **args;
+	char *buffer;
+} neko_command;
+
+typedef struct
+{
 	uint16_t mod;
 	xcb_keysym_t key;
 	char *command;
@@ -65,6 +71,7 @@ void neko_arrange();
 
 /* util */
 void neko_die(const char *msg);
+neko_command neko_get_arguments(const char *cmd);
 void neko_spawn(const char *cmd);
 void neko_add_client(xcb_window_t window);
 void neko_remove_client(xcb_window_t window);

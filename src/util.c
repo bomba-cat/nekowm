@@ -8,6 +8,26 @@ void neko_die(const char *msg)
 	exit(1);
 }
 
+neko_command neko_get_arguments(const char *cmd)
+{
+	char *copy = strdup(cmd);
+	char *token = strtok(copy, " ");
+	char **array = malloc(50 * sizeof(char*));
+
+	int i = 0;
+	while(token != NULL && i < 50)
+	{
+		array[i++] = token;
+
+		token = strtok(NULL, " ");
+	}
+
+	array[i] = NULL;
+
+	neko_command command = { array, copy };
+	return command;
+}
+
 void neko_spawn(const char *cmd)
 {
 	if(fork() == 0)
@@ -18,7 +38,12 @@ void neko_spawn(const char *cmd)
 		}
 
 		setsid();
-		execlp(cmd, cmd, NULL);
+		neko_command command = neko_get_arguments(cmd);
+		execvp(command.args[0], command.args);
+
+		free(command.args);
+		free(command.buffer);
+
 		perror("execlp");
 		exit(1);
 	}
