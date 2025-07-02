@@ -1,4 +1,5 @@
 #include "headers/neko.h"
+#include <stdlib.h>
 
 sig_atomic_t running = 1;
 
@@ -18,7 +19,6 @@ neko_command neko_get_arguments(const char *cmd)
 	while(token != NULL && i < 50)
 	{
 		array[i++] = token;
-
 		token = strtok(NULL, " ");
 	}
 
@@ -50,27 +50,32 @@ void neko_spawn(const char *cmd)
 	wait(NULL);
 }
 
+void neko_setup_stacks(int stack_count)
+{
+  stacks = realloc(stacks, sizeof(neko_stack) * stack_count);
+}
+
 void neko_add_client(xcb_window_t window)
 {
-	nekos = realloc(nekos, sizeof(neko_client) * (neko_client_count + 1));
-	nekos[neko_client_count].window = window;
-	nekos[neko_client_count].split = !nekos[(neko_client_count > 1) ? neko_client_count-1 : neko_client_count].split;
-	neko_client_count++;
+	stacks[selected_stack].clients = realloc(stacks[selected_stack].clients, sizeof(neko_client) * (stacks[selected_stack].client_count + 1));
+	stacks[selected_stack].clients[stacks[selected_stack].client_count].window = window;
+	stacks[selected_stack].clients[stacks[selected_stack].client_count].split = !stacks[selected_stack].clients[(stacks[selected_stack].client_count > 1) ? stacks[selected_stack].client_count-1 : stacks[selected_stack].client_count].split;
+	stacks[selected_stack].client_count++;
 	neko_arrange();
 }
 
 void neko_remove_client(xcb_window_t window)
 {
 	int j = 0;
-	for (int i = 0; i < neko_client_count; i++)
+	for (int i = 0; i < stacks[selected_stack].client_count; i++)
 	{
-		if(nekos[i].window != window)
+		if(stacks[selected_stack].clients[i].window != window)
 		{
-			nekos[j++] = nekos[i];
+			stacks[selected_stack].clients[j++] = stacks[selected_stack].clients[i];
 		}
 	}
-	neko_client_count = j;
-	nekos = realloc(nekos, sizeof(neko_client) * neko_client_count);
+	stacks[selected_stack].client_count = j;
+	stacks[selected_stack].clients = realloc(stacks[selected_stack].clients, sizeof(neko_client) * stacks[selected_stack].client_count);
 	neko_arrange();
 }
 

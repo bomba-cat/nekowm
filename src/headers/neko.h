@@ -37,17 +37,27 @@ typedef struct
 
 typedef struct
 {
+	int index;
 	xcb_window_t window;
 	int x, y, width, height;
 	neko_split split;
 } neko_client;
 
+typedef struct
+{
+	int index;
+	int focused_client;
+  int client_count;
+	neko_client *clients;
+} neko_stack;
+
 #include "config.h"
 
 extern xcb_connection_t *connection;
 extern xcb_screen_t *screen;
-extern neko_client *nekos;
-extern int neko_client_count;
+extern int screen_count;
+extern neko_stack *stacks;
+extern int selected_stack;
 extern xcb_key_symbols_t *keysyms;
 extern sig_atomic_t running;
 
@@ -73,6 +83,7 @@ void neko_arrange();
 void neko_die(const char *msg);
 neko_command neko_get_arguments(const char *cmd);
 void neko_spawn(const char *cmd);
+void neko_setup_stacks(int stack_count);
 void neko_add_client(xcb_window_t window);
 void neko_remove_client(xcb_window_t window);
 void neko_setup();

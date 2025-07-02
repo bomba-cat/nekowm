@@ -1,7 +1,7 @@
 #include "headers/neko.h"
 
-neko_client *nekos = NULL;
-int neko_client_count = 0;
+neko_stack *stacks = NULL;
+int selected_stack = 0;
 
 void neko_set_focus_color(xcb_window_t window, bool focus)
 {
@@ -25,7 +25,7 @@ void neko_set_focus(xcb_drawable_t window)
 
 void neko_arrange()
 {
-	if (neko_client_count == 0)
+	if (stacks[selected_stack].client_count == 0)
 	{
 		return;
 	}
@@ -33,9 +33,9 @@ void neko_arrange()
 	int x = 0, y = 0;
 	int w = screen->width_in_pixels, h = screen->height_in_pixels;
 
-	for (int i = 0; i < neko_client_count; i++)
+	for (int i = 0; i < stacks[selected_stack].client_count; i++)
 	{
-		neko_client *client = &nekos[i];
+		neko_client *client = &stacks[selected_stack].clients[i];
 
 		client->x = x + GAP;
 		client->y = y + GAP;
@@ -44,10 +44,10 @@ void neko_arrange()
 		{
 			client->width = (w / 2) - 2 * GAP - 2 * BORDER;
 			client->height = h - 2 * GAP - 2 * BORDER;
-			if (i == neko_client_count-1 && i > 0)
+			if (i == stacks[selected_stack].client_count-1 && i > 0)
 			{
-				client->width = nekos[i-1].width;
-			} else if(neko_client_count == 1)
+				client->width = stacks[selected_stack].clients[i-1].width;
+			} else if(stacks[selected_stack].client_count == 1)
 			{
 				client->width = w - 2 * GAP - 2 * BORDER;
 			}
@@ -58,10 +58,10 @@ void neko_arrange()
 		{
 			client->width = w - 2 * GAP - 2 * BORDER;
 			client->height = (h / 2) - 2 * GAP - 2 * BORDER;
-			if (i == neko_client_count-1 && i > 0)
+			if (i == stacks[selected_stack].client_count-1 && i > 0)
 			{
-				client->height = nekos[i-1].height;
-			} else if(neko_client_count == 1)
+				client->height = stacks[selected_stack].clients[i-1].height;
+			} else if(stacks[selected_stack].client_count == 1)
 			{
 				client->height = h - 2 * GAP - 2 * BORDER;
 			}
