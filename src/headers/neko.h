@@ -90,6 +90,6 @@ void neko_setup();
 void neko_run();
 
 /* main */
-void neko_cleanup(int);
+void neko_cleanup(int sig);
 
 #endif //!NEKO_H

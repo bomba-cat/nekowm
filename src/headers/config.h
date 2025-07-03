@@ -2,8 +2,8 @@
 #define CONFIG_H
 
 #define BORDER 					4
-#define FOCUSED 				0xf200ff
-#define UNFOCUSED 			0x440074
+#define FOCUSED 				0x9ea7aa
+#define UNFOCUSED 			0x2a2c2e
 #define GAP 						15
 
 /*
@@ -17,7 +17,7 @@
 static const neko_keybind keybinds[] =
 {
 	{ MOD1, XK_Return, "kitty" },
-	{ MOD1 | MOD2, XK_Return, "dmenu_run -nb '#ffe6f0' -nf '#550033' -sb '#ff99cc' -sf '#ffffff' -fn 'monospace-10'" },
+	{ MOD1 | MOD2, XK_Return, "dmenu_run" },
 };
 
 #endif /* !CONFIG_H */

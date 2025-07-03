@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 
   if (argc == 2 || (argc > 1 && (!strcmp("-h", argv[1]) || !strcmp("--help", argv[1]))))
   {
-    printf("Usage: neko [-v | --version] [STACK_COUNT]\n\n"
+    printf("Usage: nekowm [-v | --version] [STACK_COUNT]\n\n"
            "Options:\n"
            "  STACK_COUNT        Number of stacks to create [default: 10]\n"
            "  -v, --version      Show version and exit\n"

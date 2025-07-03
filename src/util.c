@@ -57,10 +57,12 @@ void neko_setup_stacks(int stack_count)
 
 void neko_add_client(xcb_window_t window)
 {
-	stacks[selected_stack].clients = realloc(stacks[selected_stack].clients, sizeof(neko_client) * (stacks[selected_stack].client_count + 1));
-	stacks[selected_stack].clients[stacks[selected_stack].client_count].window = window;
-	stacks[selected_stack].clients[stacks[selected_stack].client_count].split = !stacks[selected_stack].clients[(stacks[selected_stack].client_count > 1) ? stacks[selected_stack].client_count-1 : stacks[selected_stack].client_count].split;
-	stacks[selected_stack].client_count++;
+  neko_stack *stack = &stacks[selected_stack];
+
+	stack->clients = realloc(stack->clients, sizeof(neko_client) * (stack->client_count + 1));
+	stack->clients[stack->client_count].window = window;
+	stack->clients[stack->client_count].split = !stack->clients[(stack->client_count > 1) ? stack->client_count-1 : stack->client_count].split;
+	stack->client_count++;
 	neko_arrange();
 }
 
@@ -103,7 +105,8 @@ void neko_run()
   }
 }
 
-void neko_cleanup(int)
+void neko_cleanup(int sig)
 {
+  UNUSED(sig);
 	running = 0;
 }

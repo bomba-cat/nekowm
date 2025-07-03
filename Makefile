@@ -27,8 +27,9 @@ clean:
 	@rm -rf $(BUILD_DIR)
 
 install: all
-	@echo "Installing into "$(DESTDIR)$(BINDIR)
+	@echo "Creating "$(DESTDIR)$(BINDIR)
 	@mkdir -p $(DESTDIR)$(BINDIR)
+	@echo "Copying "$(BIN)" into "$(DESTDIR)$(BINDIR)"/"$(TARGET)
 	@cp $(BIN) $(DESTDIR)$(BINDIR)/$(TARGET)
 
 session:
