@@ -7,7 +7,7 @@ int screen_count;
 
 int main(int argc, char** argv)
 {
-	if(argc > 1 && (!strcmp("-v", argv[1]) || !strcmp("--version", argv[1])))
+  if(argc > 1 && (!strcmp("-v", argv[1]) || !strcmp("--version", argv[1])))
 	{
 		printf("NekoWM version 0.1, Copyright © 2025 bombacat, MIT License\n");
 		return EXIT_SUCCESS;
@@ -26,7 +26,8 @@ int main(int argc, char** argv)
     printf("Usage: neko [-v | --version] [STACK_COUNT]\n\n"
            "Options:\n"
            "  STACK_COUNT        Number of stacks to create [default: 10]\n"
-           "  -v, --version      Show version and exit\n");
+           "  -v, --version      Show version and exit\n"
+           "  -h, --help         Show this dialogue\n");
     return EXIT_FAILURE;
   }
 
@@ -47,7 +48,6 @@ int main(int argc, char** argv)
 	signal(SIGINT, neko_cleanup);
 	signal(SIGTERM, neko_cleanup);
 
-  neko_setup_stacks(5);
 	neko_setup();
 	neko_run();
 
