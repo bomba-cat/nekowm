@@ -20,4 +20,6 @@ static const neko_keybind keybinds[] =
 	{ MOD1 | MOD2, XK_Return, "dmenu_run" },
 };
 
+#define SOCKET_PATH "/tmp/neko.sock"
+
 #endif /* !CONFIG_H */

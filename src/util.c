@@ -1,5 +1,4 @@
 #include "headers/neko.h"
-#include <stdlib.h>
 
 sig_atomic_t running = 1;
 

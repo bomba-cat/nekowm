@@ -1,5 +1,4 @@
 #include "headers/neko.h"
-#include <stdlib.h>
 
 xcb_connection_t *connection = NULL;
 xcb_screen_t *screen = NULL;
@@ -13,11 +12,15 @@ int main(int argc, char** argv)
 		return EXIT_SUCCESS;
 	}
 
-  if(argc == 2 && atoi(argv[1]))
+  if(argc == 2 && (atoi(argv[1])>0))
   {
     argc--;
     neko_setup_stacks(atoi(argv[1]));
-  } else {
+  } else if(argc > 1)
+  {
+    neko_send_message(argc, argv);
+  } else
+  {
     neko_setup_stacks(10);
   }
 
@@ -25,9 +28,9 @@ int main(int argc, char** argv)
   {
     printf("Usage: nekowm [-v | --version] [STACK_COUNT]\n\n"
            "Options:\n"
-           "  STACK_COUNT        Number of stacks to create [default: 10]\n"
+           "  -h, --help         Show this dialogue\n"
            "  -v, --version      Show version and exit\n"
-           "  -h, --help         Show this dialogue\n");
+           "  STACK_COUNT        Number of stacks to create [default: 10]\n");
     return EXIT_FAILURE;
   }
 

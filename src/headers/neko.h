@@ -11,6 +11,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 #include <sys/wait.h>
 
 /* found this in xwm */
@@ -88,6 +90,11 @@ void neko_add_client(xcb_window_t window);
 void neko_remove_client(xcb_window_t window);
 void neko_setup();
 void neko_run();
+
+/* message */
+void neko_init_socket();
+void neko_scan_message();
+void neko_send_message(int argc, char **argv);
 
 /* main */
 void neko_cleanup(int sig);
