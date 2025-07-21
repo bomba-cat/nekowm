@@ -62,6 +62,7 @@ extern neko_stack *stacks;
 extern int selected_stack;
 extern xcb_key_symbols_t *keysyms;
 extern sig_atomic_t running;
+extern int neko_sock;
 
 /* keyboard */
 void neko_grab_keybinds();
@@ -94,7 +95,7 @@ void neko_run();
 /* message */
 void neko_init_socket();
 void neko_scan_message();
-void neko_send_message(int argc, char **argv);
+int neko_send_message(int argc, char **argv);
 
 /* main */
 void neko_cleanup(int sig);

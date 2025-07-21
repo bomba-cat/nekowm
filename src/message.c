@@ -1,31 +1,46 @@
 #include "headers/neko.h"
 
-void neko_send_message(int argc, char **argv)
+int neko_sock = -1;
+
+void neko_init_socket()
+{
+  struct sockaddr_un addr;
+  neko_sock = socket(AF_UNIX, SOCK_DGRAM, 0);
+
+  addr.sun_family = AF_UNIX;
+  strcpy(addr.sun_path, SOCKET_PATH);
+
+  unlink(SOCKET_PATH);
+  bind(neko_sock, (struct sockaddr*)&addr, sizeof(addr));
+}
+
+int neko_send_message(int argc, char **argv)
 {
   int sock = socket(AF_UNIX, SOCK_DGRAM, 0);
 
-  struct sockaddr_un client = {0}, server = {0};
-  client.sun_family = AF_UNIX;
-  server.sun_family = AF_UNIX;
-  snprintf(client.sun_path, sizeof(client.sun_path), SOCKET_PATH);
-  strcpy(server.sun_path, SOCKET_PATH);
-
-  unlink(client.sun_path);
-  bind(sock, (struct sockaddr*)&client, sizeof(client));
+  struct sockaddr_un addr;
+  addr.sun_family = AF_UNIX;
+  strcpy(addr.sun_path, SOCKET_PATH);
 
   char msg[256] = {0};
-  for (int i = 1; i < argc; ++i)
-  {
+  for (int i = 1; i < argc; ++i) {
     strcat(msg, argv[i]);
     if (i < argc - 1) strcat(msg, " ");
+
+    /* TODO: Check if valid, if not close and return 1 */
   }
 
-  sendto(sock, msg, strlen(msg), 0, (struct sockaddr*)&server, sizeof(server));
-
-  char buf[256];
-  int n = recvfrom(sock, buf, sizeof(buf), 0, NULL, NULL);
-  if(n > 0) write(1, buf, n);
+  sendto(sock, msg, strlen(msg) + 1, 0, (struct sockaddr*)&addr, sizeof(addr));
 
   close(sock);
-  unlink(client.sun_path);
+
+  return 0;
+}
+
+void neko_scan_message()
+{
+  char buf[100];
+  if (recvfrom(neko_sock, buf, sizeof(buf), MSG_DONTWAIT, NULL, NULL) > 0) {
+    printf("Received: %s\n", buf);
+  }
 }
