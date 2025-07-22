@@ -23,5 +23,6 @@ static const neko_keybind keybinds[] =
 };
 
 #define SOCKET_PATH "/tmp/neko.sock"
+#define LOG_PATH "/var/log/neko.log"
 
 #endif /* !CONFIG_H */

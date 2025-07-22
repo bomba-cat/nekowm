@@ -24,6 +24,15 @@ typedef enum
 	NEKO_HORIZONTAL,
 } neko_split;
 
+/* Log Flag */
+typedef enum
+{
+  INFO = 0,
+  WARNING = 1,
+  ERROR = 2,
+  SEVERE = 3,
+} neko_log_flag;
+
 typedef struct
 {
 	char **args;
@@ -63,6 +72,11 @@ extern int selected_stack;
 extern xcb_key_symbols_t *keysyms;
 extern sig_atomic_t running;
 extern int neko_sock;
+extern FILE *log_file;
+
+/* log */
+void neko_log_init();
+void neko_log(char* message, neko_log_flag flag);
 
 /* keyboard */
 void neko_grab_keybinds();

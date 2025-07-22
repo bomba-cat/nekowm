@@ -92,8 +92,10 @@ void neko_setup()
   xcb_flush(connection);
 
   neko_init_socket();
+  neko_log_init();
   neko_grab_keybinds();
   xcb_flush(connection);
+  neko_log("Test", INFO);
 }
 
 void neko_run()
@@ -110,9 +112,12 @@ void neko_cleanup(int sig)
 {
   UNUSED(sig);
   running = 0;
-  if (neko_sock != -1) {
+  if (neko_sock != -1)
+  {
     close(neko_sock);
     unlink(SOCKET_PATH);
     neko_sock = -1;
   }
+  if (log_file)
+    fclose(log_file);
 }
