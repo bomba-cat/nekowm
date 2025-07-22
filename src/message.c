@@ -39,8 +39,8 @@ int neko_send_message(int argc, char **argv)
       {
         goto passed;
       }
-      return 1;
     }
+    return 1;
   }
 
 passed:
