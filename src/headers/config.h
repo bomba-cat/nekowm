@@ -8,6 +8,8 @@
 
 /*
  * MOD1 = Alt
+ * MOD2 = Shift
+ * MOD3 = Control
  * MOD4 = Super
  */
 #define MOD1 						XCB_MOD_MASK_1

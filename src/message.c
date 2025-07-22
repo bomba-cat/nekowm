@@ -2,6 +2,12 @@
 
 int neko_sock = -1;
 
+static char valid[2][255] =
+  {
+    "--split-toggle",
+    "--exit-neko"
+  };
+
 void neko_init_socket()
 {
   struct sockaddr_un addr;
@@ -27,9 +33,17 @@ int neko_send_message(int argc, char **argv)
     strcat(msg, argv[i]);
     if (i < argc - 1) strcat(msg, " ");
 
-    /* TODO: Check if valid, if not close and return 1 */
+    for(long unsigned int j = 0; j < sizeof(valid)/sizeof(char); j++)
+    {
+      if (!strcmp(msg, valid[j]))
+      {
+        goto passed;
+      }
+      return 1;
+    }
   }
 
+passed:
   sendto(sock, msg, strlen(msg) + 1, 0, (struct sockaddr*)&addr, sizeof(addr));
 
   close(sock);
@@ -40,7 +54,9 @@ int neko_send_message(int argc, char **argv)
 void neko_scan_message()
 {
   char buf[100];
-  if (recvfrom(neko_sock, buf, sizeof(buf), MSG_DONTWAIT, NULL, NULL) > 0) {
+  if (recvfrom(neko_sock, buf, sizeof(buf), MSG_DONTWAIT, NULL, NULL) > 0)
+  {
     printf("Received: %s\n", buf);
+    /* TODO: Parse and execute */
   }
 }

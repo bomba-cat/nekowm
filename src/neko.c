@@ -37,6 +37,7 @@ int main(int argc, char** argv)
     {
       if (neko_send_message(argc, argv) != 0)
       {
+        print_help();
         return EXIT_FAILURE;
       }
       return EXIT_SUCCESS;
