@@ -76,7 +76,7 @@ To disable Xlib entirely, edit `src/neko.h` and `Makefile`.
 NekoWM customization is done by editing the [config file](src/headers/config.h) and compiling from source. Due to the [Philosophy](#Philosophy) of NekoWM there will not be any config file being read from any other place on the system. Unfortunately there is no other way to configure NekoWM other than to recompile the entire program.
 ### Options
 | Name | Function |
--------------------
+| ---- | -------- |
 | BORDER | Edit the border width of each mapped window |
 | FOCUSED | The border color of the currently focused window |
 | UNFOCUSED | Self explanatory |
