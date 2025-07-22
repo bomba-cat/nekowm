@@ -29,6 +29,7 @@ neko_command neko_get_arguments(const char *cmd)
 
 void neko_spawn(const char *cmd)
 {
+  neko_log("Spawning process", INFO);
   if(fork() == 0)
   {
     if (fork() > 0)
@@ -56,6 +57,7 @@ void neko_setup_stacks(int stack_count)
 
 void neko_add_client(xcb_window_t window)
 {
+  neko_log("Adding Client", INFO);
   neko_stack *stack = &stacks[selected_stack];
 
   stack->clients = realloc(stack->clients, sizeof(neko_client) * (stack->client_count + 1));
@@ -63,10 +65,12 @@ void neko_add_client(xcb_window_t window)
   stack->clients[stack->client_count].split = !stack->clients[(stack->client_count > 1) ? stack->client_count-1 : stack->client_count].split;
   stack->client_count++;
   neko_arrange();
+  neko_log("Added Client", INFO);
 }
 
 void neko_remove_client(xcb_window_t window)
 {
+  neko_log("Removing Client", INFO);
   int j = 0;
   for (int i = 0; i < stacks[selected_stack].client_count; i++)
   {
@@ -78,6 +82,7 @@ void neko_remove_client(xcb_window_t window)
   stacks[selected_stack].client_count = j;
   stacks[selected_stack].clients = realloc(stacks[selected_stack].clients, sizeof(neko_client) * stacks[selected_stack].client_count);
   neko_arrange();
+  neko_log("Removed Client", INFO);
 }
 
 void neko_setup()
@@ -95,7 +100,7 @@ void neko_setup()
   neko_log_init();
   neko_grab_keybinds();
   xcb_flush(connection);
-  neko_log("Test", INFO);
+  neko_log("Setup Sucess", INFO);
 }
 
 void neko_run()
@@ -110,6 +115,7 @@ void neko_run()
 
 void neko_cleanup(int sig)
 {
+  neko_log("Received SigInt|SigTerm", SEVERE);
   UNUSED(sig);
   running = 0;
   if (neko_sock != -1)

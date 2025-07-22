@@ -10,6 +10,7 @@ static char valid[2][255] =
 
 void neko_init_socket()
 {
+  neko_log("Initializing socket", INFO);
   struct sockaddr_un addr;
   neko_sock = socket(AF_UNIX, SOCK_DGRAM, 0);
 
@@ -18,6 +19,7 @@ void neko_init_socket()
 
   unlink(SOCKET_PATH);
   bind(neko_sock, (struct sockaddr*)&addr, sizeof(addr));
+  neko_log("Socket Initialized", INFO);
 }
 
 int neko_send_message(int argc, char **argv)
@@ -56,7 +58,7 @@ void neko_scan_message()
   char buf[100];
   if (recvfrom(neko_sock, buf, sizeof(buf), MSG_DONTWAIT, NULL, NULL) > 0)
   {
-    printf("Received: %s\n", buf);
+    neko_log("Received message", INFO);
     /* TODO: Parse and execute */
   }
 }
