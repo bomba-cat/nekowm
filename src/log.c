@@ -16,6 +16,7 @@ void neko_log_init()
 }
 
 void neko_log(char* message, neko_log_flag flag)
-{ 
-  fprintf(log_file, "%s %s\r\n", log_tag[flag], message);
+{
+  if (log_file)
+    fprintf(log_file, "%s %s\r\n", log_tag[flag], message);
 }
