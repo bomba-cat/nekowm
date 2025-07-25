@@ -96,8 +96,8 @@ void neko_setup()
   xcb_change_window_attributes(connection, screen->root, XCB_CW_EVENT_MASK, values);
   xcb_flush(connection);
 
-  neko_init_socket();
   neko_log_init();
+  neko_init_socket();
   neko_grab_keybinds();
   xcb_flush(connection);
   neko_log("Setup Sucess", INFO);
@@ -106,10 +106,18 @@ void neko_setup()
 void neko_run()
 {
   xcb_generic_event_t *ev;
-  while (running && (ev = xcb_wait_for_event(connection)))
+  while (running)
   {
     neko_scan_message();
-    neko_handle_events(ev);
+
+    ev = xcb_poll_for_event(connection);
+    if(ev)
+    {
+      neko_handle_events(ev);
+    } else
+    {
+      usleep(10000);
+    }
   }
 }
 

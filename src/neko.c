@@ -3,6 +3,7 @@
 xcb_connection_t *connection = NULL;
 xcb_screen_t *screen = NULL;
 int screen_count;
+int stack_c = 10;
 
 static void print_help(void)
 {
@@ -32,6 +33,7 @@ int main(int argc, char** argv)
     else if (atoi(argv[1]) > 0)
     {
       neko_setup_stacks(atoi(argv[1]));
+      stack_c = atoi(argv[1]);
     }
     else
     {
@@ -70,13 +72,12 @@ int main(int argc, char** argv)
 
   xcb_disconnect(connection);
 
-  free(connection);
-  free(screen);
-  for(int i = 0; i < 5; i++)
+  for(int i = 0; i < stack_c; i++)
   {
     free(stacks[i].clients);
   }
   free(stacks);
-  free(keysyms);
+  if(keysyms)
+    xcb_key_symbols_free(keysyms);
   return EXIT_SUCCESS;
 }

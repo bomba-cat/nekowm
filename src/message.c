@@ -12,10 +12,13 @@ void neko_init_socket()
 {
   neko_log("Initializing socket", INFO);
   struct sockaddr_un addr;
+  memset(&addr, 0, sizeof(addr));
   neko_sock = socket(AF_UNIX, SOCK_DGRAM, 0);
+  int flags = fcntl(neko_sock, F_GETFL, 0);
+  fcntl(neko_sock, F_SETFL, flags | O_NONBLOCK);
 
   addr.sun_family = AF_UNIX;
-  strcpy(addr.sun_path, SOCKET_PATH);
+  strncpy(addr.sun_path, SOCKET_PATH, sizeof(addr.sun_path) - 1);
 
   unlink(SOCKET_PATH);
   bind(neko_sock, (struct sockaddr*)&addr, sizeof(addr));
@@ -34,19 +37,24 @@ int neko_send_message(int argc, char **argv)
   for (int i = 1; i < argc; ++i) {
     strcat(msg, argv[i]);
     if (i < argc - 1) strcat(msg, " ");
-
-    for(long unsigned int j = 0; j < sizeof(valid)/sizeof(char); j++)
-    {
-      if (!strcmp(msg, valid[j]))
-      {
-        goto passed;
-      }
-    }
-    return 1;
   }
 
+  for(long unsigned int j = 0; j < sizeof(valid)/sizeof(valid[0]); j++)
+  {
+    if (!strcmp(msg, valid[j]))
+    {
+      goto passed;
+    }
+  }
+  return 1;
+
 passed:
-  sendto(sock, msg, strlen(msg) + 1, 0, (struct sockaddr*)&addr, sizeof(addr));
+  if (sendto(sock, msg, strlen(msg) + 1, 0, (struct sockaddr*)&addr, sizeof(addr)) == -1)
+  {
+    perror("sendto");
+    close(sock);
+    return 1;
+  }
 
   close(sock);
 
@@ -55,10 +63,22 @@ passed:
 
 void neko_scan_message()
 {
-  char buf[100];
-  if (recvfrom(neko_sock, buf, sizeof(buf), MSG_DONTWAIT, NULL, NULL) > 0)
+  char buf[256];
+  ssize_t bytes = recvfrom(neko_sock, buf, sizeof(buf)-1, MSG_DONTWAIT, NULL, NULL);
+  if (bytes == -1)
   {
-    neko_log("Received message", INFO);
-    /* TODO: Parse and execute */
+    if(errno == EAGAIN || errno == EWOULDBLOCK)
+    {
+      //neko_log("No message received", INFO);
+      return;
+    }
+    else
+    {
+      perror("recvfrom");
+      return;
+    }
   }
+  buf[bytes] = '\0';
+  neko_log("Received message", INFO);
+  neko_log(buf, INFO);
 }
