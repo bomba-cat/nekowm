@@ -69,7 +69,6 @@ void neko_scan_message()
   {
     if(errno == EAGAIN || errno == EWOULDBLOCK)
     {
-      //neko_log("No message received", INFO);
       return;
     }
     else
