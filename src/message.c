@@ -7,14 +7,17 @@ static char valid[2][255] =
     "--split-toggle",
     "--exit-neko"
   };
+#ifdef SOCKET
 static void (*validfun[2])() =
   {
     neko_split_toggle,
     neko_exit
   };
+#endif
 
 void neko_init_socket()
 {
+  #ifdef SOCKET
   neko_log("Initializing socket", INFO);
   struct sockaddr_un addr;
   memset(&addr, 0, sizeof(addr));
@@ -28,6 +31,9 @@ void neko_init_socket()
   unlink(SOCKET_PATH);
   bind(neko_sock, (struct sockaddr*)&addr, sizeof(addr));
   neko_log("Socket Initialized", INFO);
+  #else
+  return;
+  #endif
 }
 
 int neko_send_message(int argc, char **argv)
@@ -68,6 +74,7 @@ passed:
 
 void neko_scan_message()
 {
+  #ifdef SOCKET
   char buf[256];
   ssize_t bytes = recvfrom(neko_sock, buf, sizeof(buf)-1, MSG_DONTWAIT, NULL, NULL);
   if (bytes == -1)
@@ -93,5 +100,7 @@ void neko_scan_message()
       validfun[j]();
     }
   }
-
+  #else
+  return;
+  #endif
 }

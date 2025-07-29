@@ -24,6 +24,10 @@ static const neko_keybind keybinds[] =
   { MOD1, XK_t, "nekowm --split-toggle" },
 };
 
+/* Comment these out to disable them */
+#define SOCKET
+#define LOG
+
 #define SOCKET_PATH "/tmp/neko.sock"
 #define LOG_PATH "/tmp/neko.log"
 
