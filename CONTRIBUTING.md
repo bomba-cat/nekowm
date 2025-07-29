@@ -9,7 +9,6 @@ Thank you for considering contributing to NekoWM. This window manager is built w
 - **Performance**: Code should be efficient and clean. Avoid unnecessary allocations or layers.
 - **Style**: Follow the existing coding style:
   - 2-space indentation
-  - `function() {}` over `function () {}`
   - Ideally follow the allman style, though it's not enforced
   - No C++ or external dependencies
 - **Commits**: Write meaningful commit messages. Keep them concise but descriptive.

@@ -11,9 +11,11 @@
 #include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 #include <sys/wait.h>
-
-#include "config.h"
 
 /* found this in xwm */
 #define UNUSED(x) (void)(x)
@@ -24,22 +26,63 @@ typedef enum
 	NEKO_HORIZONTAL,
 } neko_split;
 
+/* Log Flag */
+typedef enum
+{
+  INFO = 0,
+  WARNING = 1,
+  ERROR = 2,
+  SEVERE = 3,
+} neko_log_flag;
+
 typedef struct
 {
+	char **args;
+	char *buffer;
+} neko_command;
+
+typedef struct
+{
+	uint16_t mod;
+	xcb_keysym_t key;
+	char *command;
+} neko_keybind;
+
+typedef struct
+{
+	int index;
 	xcb_window_t window;
 	int x, y, width, height;
 	neko_split split;
 } neko_client;
 
+typedef struct
+{
+	int index;
+	int focused_client;
+  int client_count;
+	neko_client *clients;
+} neko_stack;
+
+#include "config.h"
+
 extern xcb_connection_t *connection;
 extern xcb_screen_t *screen;
-extern neko_client *nekos;
-extern int neko_client_count;
+extern int screen_count;
+extern neko_stack *stacks;
+extern int selected_stack;
 extern xcb_key_symbols_t *keysyms;
 extern sig_atomic_t running;
+extern int neko_sock;
+extern FILE *log_file;
+
+/* log */
+void neko_log_init();
+void neko_log(char* message, neko_log_flag flag);
 
 /* keyboard */
-
+void neko_grab_keybinds();
+void neko_read_keybinds(xcb_key_press_event_t *e);
 
 /* event */
 void neko_handle_events(xcb_generic_event_t *event);
@@ -51,19 +94,28 @@ void neko_handle_map(xcb_generic_event_t *event);
 void neko_handle_key_press(xcb_generic_event_t *event);
 
 /* window */
+void neko_split_toggle();
 void neko_set_focus_color(xcb_window_t window, bool focus);
 void neko_set_focus(xcb_drawable_t window);
 void neko_arrange();
 
 /* util */
 void neko_die(const char *msg);
+neko_command neko_get_arguments(const char *cmd);
 void neko_spawn(const char *cmd);
+void neko_setup_stacks(int stack_count);
 void neko_add_client(xcb_window_t window);
 void neko_remove_client(xcb_window_t window);
 void neko_setup();
 void neko_run();
 
+/* message */
+void neko_init_socket();
+void neko_scan_message();
+int neko_send_message(int argc, char **argv);
+
 /* main */
-void neko_cleanup(int);
+void neko_exit();
+void neko_cleanup(int sig);
 
 #endif //!NEKO_H
