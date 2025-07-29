@@ -20,6 +20,8 @@ static const neko_keybind keybinds[] =
 {
 	{ MOD1, XK_Return, "kitty" },
 	{ MOD1 | MOD2, XK_Return, "dmenu_run" },
+  { MOD1 | MOD2, XK_r, "nekowm --exit-neko" },
+  { MOD1, XK_t, "nekowm --split-toggle" },
 };
 
 #define SOCKET_PATH "/tmp/neko.sock"

@@ -31,9 +31,10 @@ void neko_grab_keybinds()
 void neko_read_keybinds(xcb_key_press_event_t *e)
 {
   xcb_keysym_t keysym = xcb_key_symbols_get_keysym(keysyms, e->detail, 0);
+  xcb_keysym_t alt_keysym = xcb_key_symbols_get_keysym(keysyms, e->detail, 1);
   for(size_t i = 0; i < sizeof(keybinds)/sizeof(neko_keybind); i++)
   {
-    if((e->state & ~(XCB_MOD_MASK_LOCK | XCB_MOD_MASK_2)) == keybinds[i].mod && keysym == keybinds[i].key)
+    if((e->state & ~(XCB_MOD_MASK_LOCK | XCB_MOD_MASK_2)) == keybinds[i].mod && (keysym == keybinds[i].key || alt_keysym == keybinds[i].key))
     {
       neko_spawn(keybinds[i].command);
     }
