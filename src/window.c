@@ -7,6 +7,7 @@ void neko_split_toggle()
 {
   int focused_client = stacks[selected_stack].focused_client;
   stacks[selected_stack].clients[focused_client].split = !stacks[selected_stack].clients[focused_client].split;
+  neko_arrange();
 }
 
 void neko_set_focus_color(xcb_window_t window, bool focus)

@@ -63,8 +63,8 @@ void neko_add_client(xcb_window_t window)
   stack->clients = realloc(stack->clients, sizeof(neko_client) * (stack->client_count + 1));
   stack->clients[stack->client_count].window = window;
   stack->clients[stack->client_count].split = !stack->clients[(stack->client_count > 1) ? stack->client_count-1 : stack->client_count].split;
-  stack->client_count++;
   stack->clients[stack->client_count].index = stack->client_count;
+  stack->client_count++;
 
   neko_arrange();
   neko_log("Added Client", INFO);
@@ -121,6 +121,11 @@ void neko_run()
       usleep(10000);
     }
   }
+}
+
+void neko_exit()
+{
+  neko_cleanup(0);
 }
 
 void neko_cleanup(int sig)

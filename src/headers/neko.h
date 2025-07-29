@@ -115,6 +115,7 @@ void neko_scan_message();
 int neko_send_message(int argc, char **argv);
 
 /* main */
+void neko_exit();
 void neko_cleanup(int sig);
 
 #endif //!NEKO_H

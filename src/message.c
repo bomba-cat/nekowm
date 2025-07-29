@@ -7,6 +7,11 @@ static char valid[2][255] =
     "--split-toggle",
     "--exit-neko"
   };
+static void (*validfun[2])() =
+  {
+    neko_split_toggle,
+    neko_exit
+  };
 
 void neko_init_socket()
 {
@@ -80,4 +85,13 @@ void neko_scan_message()
   buf[bytes] = '\0';
   neko_log("Received message", INFO);
   neko_log(buf, INFO);
+
+  for(long unsigned int j = 0; j < sizeof(valid)/sizeof(valid[0]); j++)
+  {
+    if (!strcmp(buf, valid[j]))
+    {
+      validfun[j]();
+    }
+  }
+
 }
