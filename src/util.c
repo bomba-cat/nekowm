@@ -64,6 +64,8 @@ void neko_add_client(xcb_window_t window)
   stack->clients[stack->client_count].window = window;
   stack->clients[stack->client_count].split = !stack->clients[(stack->client_count > 1) ? stack->client_count-1 : stack->client_count].split;
   stack->client_count++;
+  stack->clients[stack->client_count].index = stack->client_count;
+
   neko_arrange();
   neko_log("Added Client", INFO);
 }

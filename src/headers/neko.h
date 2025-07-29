@@ -94,6 +94,7 @@ void neko_handle_map(xcb_generic_event_t *event);
 void neko_handle_key_press(xcb_generic_event_t *event);
 
 /* window */
+void neko_split_toggle();
 void neko_set_focus_color(xcb_window_t window, bool focus);
 void neko_set_focus(xcb_drawable_t window);
 void neko_arrange();

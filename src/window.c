@@ -3,6 +3,12 @@
 neko_stack *stacks = NULL;
 int selected_stack = 0;
 
+void neko_split_toggle()
+{
+  int focused_client = stacks[selected_stack].focused_client;
+  stacks[selected_stack].clients[focused_client].split = !stacks[selected_stack].clients[focused_client].split;
+}
+
 void neko_set_focus_color(xcb_window_t window, bool focus)
 {
   if ((BORDER > 0) && (screen->root != window) && (0 != window))
@@ -18,6 +24,16 @@ void neko_set_focus(xcb_drawable_t window)
 {
   if ((window != 0) && (window != screen->root))
   {
+    neko_stack *stack = &stacks[selected_stack];
+
+    for(int i = 0; i < stack->client_count; i++)
+    {
+      if(stack->clients[i].window == window)
+      {
+        stack->focused_client = stack->clients[i].index;
+      }
+    }
+
     xcb_set_input_focus(connection, XCB_INPUT_FOCUS_POINTER_ROOT, window, XCB_CURRENT_TIME);
     xcb_flush(connection);
   }
