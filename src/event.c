@@ -25,7 +25,7 @@ void neko_handle_focus_out(xcb_generic_event_t *event)
 
 void neko_handle_enter_notify(xcb_generic_event_t *event)
 {
-  xcb_enter_notify_event_t *e = ( xcb_enter_notify_event_t *)event;
+  xcb_enter_notify_event_t *e = (xcb_enter_notify_event_t *)event;
   neko_set_focus(e->event);
 }
 
@@ -50,36 +50,36 @@ void neko_handle_events(xcb_generic_event_t *event)
 {
   switch (event->response_type & ~0x80)
   {
-    case XCB_MAP_REQUEST:
-      {
-        neko_handle_map(event);
-        break;
-      }
-    case XCB_DESTROY_NOTIFY:
-      {
-        neko_handle_destroy(event);
-        break;
-      }
-    case XCB_FOCUS_IN:
-      {
-        neko_handle_focus_in(event);
-        break;
-      }
-    case XCB_FOCUS_OUT:
-      {
-        neko_handle_focus_out(event);
-        break;
-      }
-    case XCB_ENTER_NOTIFY:
-      {
-        neko_handle_enter_notify(event);
-        break;
-      }
-    case XCB_KEY_PRESS:
-      {
-        neko_handle_key_press(event);
-        break;
-      }
+  case XCB_MAP_REQUEST:
+  {
+    neko_handle_map(event);
+    break;
+  }
+  case XCB_DESTROY_NOTIFY:
+  {
+    neko_handle_destroy(event);
+    break;
+  }
+  case XCB_FOCUS_IN:
+  {
+    neko_handle_focus_in(event);
+    break;
+  }
+  case XCB_FOCUS_OUT:
+  {
+    neko_handle_focus_out(event);
+    break;
+  }
+  case XCB_ENTER_NOTIFY:
+  {
+    neko_handle_enter_notify(event);
+    break;
+  }
+  case XCB_KEY_PRESS:
+  {
+    neko_handle_key_press(event);
+    break;
+  }
   }
   free(event);
 }

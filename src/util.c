@@ -12,10 +12,10 @@ neko_command neko_get_arguments(const char *cmd)
 {
   char *copy = strdup(cmd);
   char *token = strtok(copy, " ");
-  char **array = malloc(50 * sizeof(char*));
+  char **array = malloc(50 * sizeof(char *));
 
   int i = 0;
-  while(token != NULL && i < 50)
+  while (token != NULL && i < 50)
   {
     array[i++] = token;
     token = strtok(NULL, " ");
@@ -23,14 +23,14 @@ neko_command neko_get_arguments(const char *cmd)
 
   array[i] = NULL;
 
-  neko_command command = { array, copy };
+  neko_command command = {array, copy};
   return command;
 }
 
 void neko_spawn(const char *cmd)
 {
   neko_log("Spawning process", INFO);
-  if(fork() == 0)
+  if (fork() == 0)
   {
     if (fork() > 0)
     {
@@ -62,7 +62,9 @@ void neko_add_client(xcb_window_t window)
 
   stack->clients = realloc(stack->clients, sizeof(neko_client) * (stack->client_count + 1));
   stack->clients[stack->client_count].window = window;
-  stack->clients[stack->client_count].split = !stack->clients[(stack->client_count > 1) ? stack->client_count-1 : stack->client_count].split;
+  stack->clients[stack->client_count].split =
+      !stack->clients[(stack->client_count > 1) ? stack->client_count - 1 : stack->client_count]
+           .split;
   stack->clients[stack->client_count].index = stack->client_count;
   stack->client_count++;
 
@@ -76,25 +78,23 @@ void neko_remove_client(xcb_window_t window)
   int j = 0;
   for (int i = 0; i < stacks[selected_stack].client_count; i++)
   {
-    if(stacks[selected_stack].clients[i].window != window)
+    if (stacks[selected_stack].clients[i].window != window)
     {
       stacks[selected_stack].clients[j++] = stacks[selected_stack].clients[i];
     }
   }
   stacks[selected_stack].client_count = j;
-  stacks[selected_stack].clients = realloc(stacks[selected_stack].clients, sizeof(neko_client) * stacks[selected_stack].client_count);
+  stacks[selected_stack].clients = realloc(
+      stacks[selected_stack].clients, sizeof(neko_client) * stacks[selected_stack].client_count);
   neko_arrange();
   neko_log("Removed Client", INFO);
 }
 
 void neko_setup()
 {
-  uint32_t values[] =
-    {
-      XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY |
-      XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW |
-      XCB_EVENT_MASK_STRUCTURE_NOTIFY | XCB_EVENT_MASK_PROPERTY_CHANGE
-    };
+  uint32_t values[] = {XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY |
+                       XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW |
+                       XCB_EVENT_MASK_STRUCTURE_NOTIFY | XCB_EVENT_MASK_PROPERTY_CHANGE};
   xcb_change_window_attributes(connection, screen->root, XCB_CW_EVENT_MASK, values);
   xcb_flush(connection);
 
@@ -113,20 +113,18 @@ void neko_run()
     neko_scan_message();
 
     ev = xcb_poll_for_event(connection);
-    if(ev)
+    if (ev)
     {
       neko_handle_events(ev);
-    } else
+    }
+    else
     {
       usleep(10000);
     }
   }
 }
 
-void neko_exit()
-{
-  neko_cleanup(0);
-}
+void neko_exit() { neko_cleanup(0); }
 
 void neko_cleanup(int sig)
 {
@@ -139,6 +137,5 @@ void neko_cleanup(int sig)
     unlink(SOCKET_PATH);
     neko_sock = -1;
   }
-  if (log_file)
-    fclose(log_file);
+  if (log_file) fclose(log_file);
 }

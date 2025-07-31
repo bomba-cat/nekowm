@@ -6,7 +6,8 @@ int selected_stack = 0;
 void neko_split_toggle()
 {
   int focused_client = stacks[selected_stack].focused_client;
-  stacks[selected_stack].clients[focused_client].split = !stacks[selected_stack].clients[focused_client].split;
+  stacks[selected_stack].clients[focused_client].split =
+      !stacks[selected_stack].clients[focused_client].split;
   neko_arrange();
 }
 
@@ -27,9 +28,9 @@ void neko_set_focus(xcb_drawable_t window)
   {
     neko_stack *stack = &stacks[selected_stack];
 
-    for(int i = 0; i < stack->client_count; i++)
+    for (int i = 0; i < stack->client_count; i++)
     {
-      if(stack->clients[i].window == window)
+      if (stack->clients[i].window == window)
       {
         stack->focused_client = stack->clients[i].index;
       }
@@ -61,24 +62,27 @@ void neko_arrange()
     {
       client->width = (w / 2) - 2 * GAP - 2 * BORDER;
       client->height = h - 2 * GAP - 2 * BORDER;
-      if (i == stacks[selected_stack].client_count-1 && i > 0)
+      if (i == stacks[selected_stack].client_count - 1 && i > 0)
       {
-        client->width = stacks[selected_stack].clients[i-1].width;
-      } else if(stacks[selected_stack].client_count == 1)
+        client->width = stacks[selected_stack].clients[i - 1].width;
+      }
+      else if (stacks[selected_stack].client_count == 1)
       {
         client->width = w - 2 * GAP - 2 * BORDER;
       }
 
       x += w / 2;
       w /= 2;
-    } else
+    }
+    else
     {
       client->width = w - 2 * GAP - 2 * BORDER;
       client->height = (h / 2) - 2 * GAP - 2 * BORDER;
-      if (i == stacks[selected_stack].client_count-1 && i > 0)
+      if (i == stacks[selected_stack].client_count - 1 && i > 0)
       {
-        client->height = stacks[selected_stack].clients[i-1].height;
-      } else if(stacks[selected_stack].client_count == 1)
+        client->height = stacks[selected_stack].clients[i - 1].height;
+      }
+      else if (stacks[selected_stack].client_count == 1)
       {
         client->height = h - 2 * GAP - 2 * BORDER;
       }
@@ -86,10 +90,9 @@ void neko_arrange()
       y += h / 2;
       h /= 2;
     }
-    uint32_t values[5] = { client->x, client->y, client->width, client->height, BORDER };
-    uint32_t mask = XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y |
-      XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT |
-      XCB_CONFIG_WINDOW_BORDER_WIDTH;
+    uint32_t values[5] = {client->x, client->y, client->width, client->height, BORDER};
+    uint32_t mask = XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y | XCB_CONFIG_WINDOW_WIDTH |
+                    XCB_CONFIG_WINDOW_HEIGHT | XCB_CONFIG_WINDOW_BORDER_WIDTH;
     xcb_configure_window(connection, client->window, mask, values);
   }
   xcb_flush(connection);

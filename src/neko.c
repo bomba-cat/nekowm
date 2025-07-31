@@ -16,7 +16,7 @@ static void print_help(void)
          "  STACK_COUNT        Number of stacks to create [default: 10]\n");
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   if (argc > 1)
   {
@@ -72,12 +72,11 @@ int main(int argc, char** argv)
 
   xcb_disconnect(connection);
 
-  for(int i = 0; i < stack_c; i++)
+  for (int i = 0; i < stack_c; i++)
   {
     free(stacks[i].clients);
   }
   free(stacks);
-  if(keysyms)
-    xcb_key_symbols_free(keysyms);
+  if (keysyms) xcb_key_symbols_free(keysyms);
   return EXIT_SUCCESS;
 }

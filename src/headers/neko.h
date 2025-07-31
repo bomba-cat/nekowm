@@ -1,29 +1,29 @@
 #ifndef NEKO_H
 #define NEKO_H
 
-#include <xcb/xcb.h>
-#include <xcb/xcb_keysyms.h>
 #include <X11/keysym.h>
 #include <X11/keysymdef.h>
-#include <stdio.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <sys/wait.h>
+#include <unistd.h>
+#include <xcb/xcb.h>
+#include <xcb/xcb_keysyms.h>
 
 /* found this in xwm */
 #define UNUSED(x) (void)(x)
 
 typedef enum
 {
-	NEKO_VERTICAL,
-	NEKO_HORIZONTAL,
+  NEKO_VERTICAL,
+  NEKO_HORIZONTAL,
 } neko_split;
 
 /* Log Flag */
@@ -37,31 +37,31 @@ typedef enum
 
 typedef struct
 {
-	char **args;
-	char *buffer;
+  char **args;
+  char *buffer;
 } neko_command;
 
 typedef struct
 {
-	uint16_t mod;
-	xcb_keysym_t key;
-	char *command;
+  uint16_t mod;
+  xcb_keysym_t key;
+  char *command;
 } neko_keybind;
 
 typedef struct
 {
-	int index;
-	xcb_window_t window;
-	int x, y, width, height;
-	neko_split split;
+  int index;
+  xcb_window_t window;
+  int x, y, width, height;
+  neko_split split;
 } neko_client;
 
 typedef struct
 {
-	int index;
-	int focused_client;
+  int index;
+  int focused_client;
   int client_count;
-	neko_client *clients;
+  neko_client *clients;
 } neko_stack;
 
 #include "config.h"
@@ -78,7 +78,7 @@ extern FILE *log_file;
 
 /* log */
 void neko_log_init();
-void neko_log(char* message, neko_log_flag flag);
+void neko_log(char *message, neko_log_flag flag);
 
 /* keyboard */
 void neko_grab_keybinds();
@@ -118,4 +118,4 @@ int neko_send_message(int argc, char **argv);
 void neko_exit();
 void neko_cleanup(int sig);
 
-#endif //!NEKO_H
+#endif //! NEKO_H
