@@ -1,8 +1,6 @@
 #ifndef NEKO_H
 #define NEKO_H
 
-#include <X11/keysym.h>
-#include <X11/keysymdef.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <signal.h>
@@ -95,6 +93,7 @@ void neko_handle_key_press(xcb_generic_event_t *event);
 
 /* window */
 void neko_split_toggle();
+void neko_close_window();
 void neko_set_focus_color(xcb_window_t window, bool focus);
 void neko_set_focus(xcb_drawable_t window);
 void neko_arrange();

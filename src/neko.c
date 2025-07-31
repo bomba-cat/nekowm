@@ -13,6 +13,7 @@ static void print_help(void)
          "  -v, --version      Show version and exit\n"
          "  --split-toggle     Split the toggle of the current selected window\n"
          "  --exit-neko        Kill the window manager\n"
+         "  --close-focused    Closes the currently focused window\n"
          "  STACK_COUNT        Number of stacks to create [default: 10]\n");
 }
 

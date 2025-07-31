@@ -11,6 +11,19 @@ void neko_split_toggle()
   neko_arrange();
 }
 
+void neko_close_window()
+{
+  /* TODO:
+   * Close window properly by trying with a cookie first
+   * and if it doesn't handle that we force close it
+   * */
+
+  int focused_client = stacks[selected_stack].focused_client;
+  xcb_window_t window = stacks[selected_stack].clients[focused_client].window;
+  xcb_destroy_window(connection, window);
+  neko_arrange();
+}
+
 void neko_set_focus_color(xcb_window_t window, bool focus)
 {
   if ((BORDER > 0) && (screen->root != window) && (0 != window))

@@ -2,9 +2,9 @@
 
 int neko_sock = -1;
 
-static char valid[2][255] = {"--split-toggle", "--exit-neko"};
+static char valid[3][255] = {"--split-toggle", "--exit-neko", "--close-focused"};
 #ifdef SOCKET
-static void (*validfun[2])() = {neko_split_toggle, neko_exit};
+static void (*validfun[3])() = {neko_split_toggle, neko_exit, neko_close_window};
 #endif
 
 void neko_init_socket()
