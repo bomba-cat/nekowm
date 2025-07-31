@@ -20,7 +20,7 @@
 #define MOD3 XCB_MOD_MASK_CONTROL
 #define MOD4 XCB_MOD_MASK_4
 static const neko_keybind keybinds[] = {{MOD1, XK_Return, "kitty"},
-                                        {MOD1 | MOD2, XK_Return, "dmenu_run"},
+                                        {MOD1, XK_d, "dmenu_run"},
                                         {MOD1 | MOD2, XK_e, "nekowm --exit-neko"},
                                         {MOD1, XK_space, "nekowm --split-toggle"},
                                         {MOD1, XK_t, "nekowm --close-focused"}};
