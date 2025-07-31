@@ -1,4 +1,4 @@
-CC = clangd
+CC = clang
 CFLAGS = -Wall -Wextra -O3
 LDFLAGS = -lxcb -lxcb-keysyms
 
