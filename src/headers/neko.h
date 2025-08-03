@@ -12,6 +12,7 @@
 #include <sys/un.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <xcb/randr.h>
 #include <xcb/xcb.h>
 #include <xcb/xcb_keysyms.h>
 
@@ -32,6 +33,11 @@ typedef enum
   ERROR = 2,
   SEVERE = 3,
 } neko_log_flag;
+
+typedef struct
+{
+  int x, y, width, height;
+} neko_monitor;
 
 typedef struct
 {
@@ -67,8 +73,10 @@ typedef struct
 extern xcb_connection_t *connection;
 extern xcb_screen_t *screen;
 extern int screen_count;
+extern neko_monitor *monitors;
+extern int monitor_count;
 extern neko_stack *stacks;
-extern int selected_stack;
+extern int *selected_stacks;
 extern xcb_key_symbols_t *keysyms;
 extern sig_atomic_t running;
 extern int neko_sock;
@@ -105,6 +113,9 @@ void neko_spawn(const char *cmd);
 void neko_setup_stacks(int stack_count);
 void neko_add_client(xcb_window_t window);
 void neko_remove_client(xcb_window_t window);
+int neko_find_monitor_for_window(int wx, int wy);
+int neko_get_monitor_under_cursor();
+void neko_update_monitors();
 void neko_setup();
 void neko_run();
 

@@ -1,6 +1,9 @@
 #include "headers/neko.h"
 
 sig_atomic_t running = 1;
+int *selected_stacks = NULL;
+neko_monitor *monitors = NULL;
+int monitor_count;
 
 void neko_die(const char *msg)
 {
@@ -57,6 +60,9 @@ void neko_setup_stacks(int stack_count)
 
 void neko_add_client(xcb_window_t window)
 {
+  int curr_mon = neko_get_monitor_under_cursor();
+  int selected_stack = selected_stacks[curr_mon];
+
   neko_log("Adding Client", INFO);
   neko_stack *stack = &stacks[selected_stack];
 
@@ -74,6 +80,9 @@ void neko_add_client(xcb_window_t window)
 
 void neko_remove_client(xcb_window_t window)
 {
+  int curr_mon = neko_get_monitor_under_cursor();
+  int selected_stack = selected_stacks[curr_mon];
+
   neko_log("Removing Client", INFO);
   int j = 0;
   for (int i = 0; i < stacks[selected_stack].client_count; i++)
@@ -90,6 +99,47 @@ void neko_remove_client(xcb_window_t window)
   neko_log("Removed Client", INFO);
 }
 
+void neko_update_monitors()
+{
+  neko_log("Updating Monitors", INFO);
+  xcb_randr_get_screen_resources_current_cookie_t res_cookie =
+      xcb_randr_get_screen_resources_current(connection, screen->root);
+  xcb_randr_get_screen_resources_current_reply_t *res =
+      xcb_randr_get_screen_resources_current_reply(connection, res_cookie, NULL);
+  if (!res)
+  {
+    neko_log("Updating Monitors Failed", ERROR);
+    return;
+  }
+
+  xcb_randr_crtc_t *crtcs = xcb_randr_get_screen_resources_current_crtcs(res);
+  int num_crtcs = xcb_randr_get_screen_resources_current_crtcs_length(res);
+
+  free(monitors);
+  monitors = calloc(num_crtcs, sizeof(neko_monitor));
+  monitor_count = 0;
+
+  for (int i = 0; i < num_crtcs; ++i)
+  {
+    xcb_randr_get_crtc_info_cookie_t crtc_cookie =
+        xcb_randr_get_crtc_info(connection, crtcs[i], res->config_timestamp);
+    xcb_randr_get_crtc_info_reply_t *crtc =
+        xcb_randr_get_crtc_info_reply(connection, crtc_cookie, NULL);
+    if (!crtc) continue;
+
+    if (crtc->num_outputs > 0 && crtc->width > 0 && crtc->height > 0)
+    {
+      monitors[monitor_count++] =
+          (neko_monitor){.x = crtc->x, .y = crtc->y, .width = crtc->width, .height = crtc->height};
+    }
+
+    free(crtc);
+  }
+
+  free(res);
+  neko_log("Updated Monitors", INFO);
+}
+
 void neko_setup()
 {
   uint32_t values[] = {XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY |
@@ -101,8 +151,53 @@ void neko_setup()
   neko_log_init();
   neko_init_socket();
   neko_grab_keybinds();
+  neko_update_monitors();
+  selected_stacks = calloc(monitor_count, sizeof(int));
+  for (int i = 0; i < monitor_count; i++)
+  {
+    selected_stacks[i] = i;
+  }
   xcb_flush(connection);
   neko_log("Setup Sucess", INFO);
+}
+
+int neko_find_monitor_for_window(int wx, int wy)
+{
+  for (int i = 0; i < monitor_count; ++i)
+  {
+    if (wx >= monitors[i].x && wx < monitors[i].x + monitors[i].width && wy >= monitors[i].y &&
+        wy < monitors[i].y + monitors[i].height)
+    {
+      return i;
+    }
+  }
+  return 0;
+}
+
+int neko_get_monitor_under_cursor()
+{
+  xcb_query_pointer_cookie_t pointer_cookie = xcb_query_pointer(connection, screen->root);
+  xcb_query_pointer_reply_t *pointer_reply =
+      xcb_query_pointer_reply(connection, pointer_cookie, NULL);
+
+  if (!pointer_reply)
+  {
+    neko_log("Failed to get pointer reply", ERROR);
+    return 0;
+  }
+
+  int x = pointer_reply->root_x;
+  int y = pointer_reply->root_y;
+
+  for (int i = 0; i < monitor_count; ++i)
+  {
+    if (x >= monitors[i].x && x < monitors[i].x + monitors[i].width && y >= monitors[i].y &&
+        y < monitors[i].y + monitors[i].height)
+    {
+      return i;
+    }
+  }
+  return 0;
 }
 
 void neko_run()

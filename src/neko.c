@@ -59,10 +59,6 @@ int main(int argc, char **argv)
 
   const xcb_setup_t *setup = xcb_get_setup(connection);
   xcb_screen_iterator_t iterator = xcb_setup_roots_iterator(setup);
-  for (int i = 0; i < screen_count; ++i)
-  {
-    xcb_screen_next(&iterator);
-  }
   screen = iterator.data;
 
   signal(SIGINT, neko_cleanup);
