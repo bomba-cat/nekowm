@@ -18,7 +18,11 @@ void neko_init_socket()
   fcntl(neko_sock, F_SETFL, flags | O_NONBLOCK);
 
   addr.sun_family = AF_UNIX;
+#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
+  addr.sun_len = sizeof(struct sockaddr_un);
+#endif
   strncpy(addr.sun_path, SOCKET_PATH, sizeof(addr.sun_path) - 1);
+  addr.sun_path[sizeof(addr.sun_path) - 1] = '\0';
 
   unlink(SOCKET_PATH);
   bind(neko_sock, (struct sockaddr *)&addr, sizeof(addr));
@@ -34,7 +38,11 @@ int neko_send_message(int argc, char **argv)
 
   struct sockaddr_un addr;
   addr.sun_family = AF_UNIX;
+#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
+  addr.sun_len = sizeof(struct sockaddr_un);
+#endif
   strcpy(addr.sun_path, SOCKET_PATH);
+  addr.sun_path[sizeof(addr.sun_path) - 1] = '\0';
 
   char msg[256] = {0};
   for (int i = 1; i < argc; ++i)
