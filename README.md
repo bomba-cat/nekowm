@@ -40,7 +40,7 @@ NekoWM is designed to be a single, self-contained binary with:
 
 ## Building
 ### Dependencies
-- `libxcb`
+- `libxcb` (`keysyms` and `randr`)
 - `Xlib` (only for keysyms, see [Xlib note](#xlib))
 - `clang` (edit `Makefile` to use another compiler)
 - `make`
