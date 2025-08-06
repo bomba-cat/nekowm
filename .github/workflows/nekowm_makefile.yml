@@ -21,6 +21,7 @@ jobs:
           libxcb1-dev \
           libxcb-util0-dev \
           libxcb-keysyms1-dev \
+          libxcb-randr0-dev \
           x11proto-dev
 
     - name: Build NekoWM
