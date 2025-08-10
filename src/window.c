@@ -73,12 +73,39 @@ void neko_arrange()
       continue;
     }
 
-    int x = monitors[m].x, y = monitors[m].y;
-    int w = monitors[m].width, h = monitors[m].height;
+    int x = monitors[m].x, y;
+    int w = monitors[m].width, h;
+#ifdef BAR
+    if (BAR_POSITION)
+    {
+      h = monitors[m].height - BAR_HEIGHT;
+      y = monitors[m].y + BAR_HEIGHT;
+    }
+    else
+    {
+      h = monitors[m].height - BAR_HEIGHT;
+      y = monitors[m].y;
+    }
+#else
+    h = monitors[m].height;
+    y = monitors[m].y;
+#endif
 
     for (int i = 0; i < stacks[selected_stack].client_count; i++)
     {
       neko_client *client = &stacks[selected_stack].clients[i];
+
+      xcb_get_window_attributes_cookie_t cookie =
+          xcb_get_window_attributes(connection, client->window);
+      xcb_get_window_attributes_reply_t *attr =
+          xcb_get_window_attributes_reply(connection, cookie, NULL);
+
+      if (attr->override_redirect)
+      {
+        // xcb_map_window(connection, client->window);
+        free(attr);
+        continue;
+      }
 
       client->x = x + GAP;
       client->y = y + GAP;

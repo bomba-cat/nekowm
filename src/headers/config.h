@@ -4,6 +4,13 @@
 #include <X11/keysym.h>
 #include <X11/keysymdef.h>
 
+/*
+ *  0 = Top
+ *  1 = Bottom
+ */
+#define BAR_POSITION 1
+#define BAR_COLOR 0x2a2c2e
+#define BAR_HEIGHT 25
 #define BORDER 4
 #define FOCUSED 0x9ea7aa
 #define UNFOCUSED 0x2a2c2e
@@ -28,6 +35,7 @@ static const neko_keybind keybinds[] = {{MOD1, XK_Return, "kitty"},
 /* Comment these out to disable them */
 #define SOCKET
 #define LOG
+#define BAR
 
 #define SOCKET_PATH "/tmp/neko.sock"
 #define LOG_PATH "/tmp/neko.log"

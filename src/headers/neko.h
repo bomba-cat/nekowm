@@ -3,6 +3,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <pthread.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -15,6 +16,7 @@
 #include <xcb/randr.h>
 #include <xcb/xcb.h>
 #include <xcb/xcb_keysyms.h>
+#include <xcb/xproto.h>
 
 /* found this in xwm */
 #define UNUSED(x) (void)(x)
@@ -33,6 +35,11 @@ typedef enum
   ERROR = 2,
   SEVERE = 3,
 } neko_log_flag;
+
+typedef struct
+{
+  int x, y, width, height;
+} neko_bar_args;
 
 typedef struct
 {
@@ -123,6 +130,10 @@ void neko_run();
 void neko_init_socket();
 void neko_scan_message();
 int neko_send_message(int argc, char **argv);
+
+/* bar */
+void *neko_create_bar();
+void neko_execute_bar();
 
 /* main */
 void neko_exit();
