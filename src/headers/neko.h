@@ -132,8 +132,8 @@ void neko_scan_message();
 int neko_send_message(int argc, char **argv);
 
 /* bar */
-void *neko_create_bar();
-void neko_execute_bar();
+void *neko_create_bar(void *args);
+void neko_execute_bar(neko_bar_args args);
 
 /* main */
 void neko_exit();
