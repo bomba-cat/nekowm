@@ -99,6 +99,7 @@ void neko_arrange()
           xcb_get_window_attributes(connection, client->window);
       xcb_get_window_attributes_reply_t *attr =
           xcb_get_window_attributes_reply(connection, cookie, NULL);
+      if (!attr) continue;
 
       if (attr->override_redirect)
       {

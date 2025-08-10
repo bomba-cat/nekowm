@@ -203,6 +203,7 @@ int neko_get_monitor_under_cursor()
 void neko_run()
 {
   xcb_generic_event_t *ev;
+  neko_execute_bar((neko_bar_args){0, 0, 1920, 1080});
   while (running)
   {
     neko_scan_message();
