@@ -2,8 +2,9 @@
 
 neko_stack *stacks = NULL;
 
-void neko_split_toggle()
+void neko_split_toggle(neko_message_args args)
 {
+  UNUSED(args);
   int curr_mon = neko_get_monitor_under_cursor();
   int selected_stack = selected_stacks[curr_mon];
 
@@ -13,19 +14,42 @@ void neko_split_toggle()
   neko_arrange();
 }
 
-void neko_close_window()
+void neko_close_window(neko_message_args args)
 {
-  /* TODO:
-   * Close window properly by trying with a cookie first
-   * and if it doesn't handle that we force close it
-   * */
+  UNUSED(args);
+  xcb_intern_atom_cookie_t protocol_cookie = xcb_intern_atom(connection, 1, 12, "WM_PROTOCOLS");
+  xcb_intern_atom_cookie_t delete_cookie = xcb_intern_atom(connection, 0, 16, "WM_DELETE_WINDOW");
+
+  xcb_intern_atom_reply_t *protocol_reply = xcb_intern_atom_reply(connection, protocol_cookie, 0);
+  xcb_intern_atom_reply_t *delete_reply = xcb_intern_atom_reply(connection, delete_cookie, 0);
 
   int curr_mon = neko_get_monitor_under_cursor();
   int selected_stack = selected_stacks[curr_mon];
 
   int focused_client = stacks[selected_stack].focused_client;
   xcb_window_t window = stacks[selected_stack].clients[focused_client].window;
-  xcb_destroy_window(connection, window);
+
+  if (!protocol_reply || !delete_reply)
+  {
+    neko_log("protocol_reply or delete_reply failed, destroying window instead", WARNING);
+    xcb_destroy_window(connection, window);
+  }
+  else
+  {
+    neko_log("Closing window", INFO);
+    xcb_client_message_event_t event = {0};
+    event.response_type = XCB_CLIENT_MESSAGE;
+    event.format = 32;
+    event.window = window;
+    event.type = protocol_reply->atom;
+    event.data.data32[0] = delete_reply->atom;
+    event.data.data32[1] = XCB_CURRENT_TIME;
+
+    xcb_send_event(connection, 0, window, XCB_EVENT_MASK_NO_EVENT, (char *)&event);
+  }
+
+  free(protocol_reply);
+  free(delete_reply);
   neko_arrange();
 }
 

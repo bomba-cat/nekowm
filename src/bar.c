@@ -1,12 +1,19 @@
 #include "headers/neko.h"
-#include <xcb/xcb.h>
-#include <xcb/xproto.h>
 
 void *neko_create_bar(void *args)
 {
+  neko_log("Created bar thread", INFO);
   neko_bar_args *bar_args = (neko_bar_args *)args;
+
+  if (!bar_args || bar_args->width == 0 || bar_args->height == 0)
+  {
+    neko_log("Invalid bar_args (zero size or null), Test2", ERROR);
+    free(bar_args);
+    return NULL;
+  }
+
   xcb_connection_t *conn = xcb_connect(NULL, NULL);
-  xcb_screen_t *screen = xcb_setup_roots_iterator(xcb_get_setup(conn)).data;
+  xcb_screen_t *scr = xcb_setup_roots_iterator(xcb_get_setup(conn)).data;
 
   xcb_window_t window = xcb_generate_id(conn);
 
@@ -14,13 +21,16 @@ void *neko_create_bar(void *args)
   uint32_t value_list[] = {1};
 
   /* TODO: Bar Border */
-  xcb_create_window(conn, XCB_COPY_FROM_PARENT, window, screen->root, bar_args->x, bar_args->y,
+  xcb_create_window(conn, XCB_COPY_FROM_PARENT, window, scr->root, bar_args->x, bar_args->y,
                     bar_args->width, bar_args->height, 0, XCB_WINDOW_CLASS_INPUT_OUTPUT,
-                    screen->root_visual, value_mask, value_list);
+                    scr->root_visual, value_mask, value_list);
 
   xcb_gcontext_t gc = xcb_generate_id(conn);
-  uint32_t gc_values[] = {screen->white_pixel, 0};
+  uint32_t gc_values[] = {scr->white_pixel, 0};
   xcb_create_gc(conn, gc, window, XCB_GC_FOREGROUND | XCB_GC_LINE_WIDTH, gc_values);
+
+  xcb_map_window(conn, window);
+  xcb_flush(conn);
 
   xcb_rectangle_t rect = {0, 0, bar_args->width, bar_args->height};
   xcb_poly_fill_rectangle(conn, window, gc, 1, &rect);
@@ -43,6 +53,8 @@ void *neko_create_bar(void *args)
   }
 
   xcb_disconnect(conn);
+  neko_log("Exiting bar thread", WARNING);
+  free(bar_args);
   return NULL;
 }
 
@@ -50,5 +62,13 @@ void neko_execute_bar(neko_bar_args args)
 {
   pthread_t bar_thread;
 
-  pthread_create(&bar_thread, NULL, neko_create_bar, &args);
+  if (args.width == 0 || args.height == 0)
+  {
+    neko_log("Invalid bar_args (zero size or null), Test1", ERROR);
+  }
+
+  neko_bar_args *heap_args = malloc(sizeof(neko_bar_args));
+  *heap_args = args;
+  pthread_create(&bar_thread, NULL, neko_create_bar, heap_args);
+  pthread_detach(bar_thread);
 }

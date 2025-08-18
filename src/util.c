@@ -60,10 +60,10 @@ void neko_setup_stacks(int stack_count)
 
 void neko_add_client(xcb_window_t window)
 {
+  neko_log("Adding Client", INFO);
   int curr_mon = neko_get_monitor_under_cursor();
   int selected_stack = selected_stacks[curr_mon];
 
-  neko_log("Adding Client", INFO);
   neko_stack *stack = &stacks[selected_stack];
 
   stack->clients = realloc(stack->clients, sizeof(neko_client) * (stack->client_count + 1));
@@ -76,14 +76,15 @@ void neko_add_client(xcb_window_t window)
 
   neko_arrange();
   neko_log("Added Client", INFO);
+  return;
 }
 
 void neko_remove_client(xcb_window_t window)
 {
+  neko_log("Removing Client", INFO);
   int curr_mon = neko_get_monitor_under_cursor();
   int selected_stack = selected_stacks[curr_mon];
 
-  neko_log("Removing Client", INFO);
   int j = 0;
   for (int i = 0; i < stacks[selected_stack].client_count; i++)
   {
@@ -97,6 +98,7 @@ void neko_remove_client(xcb_window_t window)
       stacks[selected_stack].clients, sizeof(neko_client) * stacks[selected_stack].client_count);
   neko_arrange();
   neko_log("Removed Client", INFO);
+  return;
 }
 
 void neko_update_monitors()
@@ -203,7 +205,7 @@ int neko_get_monitor_under_cursor()
 void neko_run()
 {
   xcb_generic_event_t *ev;
-  neko_execute_bar((neko_bar_args){0, 0, 1920, 1080});
+  int x = 0;
   while (running)
   {
     neko_scan_message();
@@ -215,12 +217,21 @@ void neko_run()
     }
     else
     {
+      if (!x)
+      {
+        neko_execute_bar((neko_bar_args){0, 0, 1920, BAR_HEIGHT});
+      }
+      x++;
       usleep(10000);
     }
   }
 }
 
-void neko_exit() { neko_cleanup(0); }
+void neko_exit(neko_message_args args)
+{
+  UNUSED(args);
+  neko_cleanup(0);
+}
 
 void neko_cleanup(int sig)
 {

@@ -36,6 +36,26 @@ typedef enum
   SEVERE = 3,
 } neko_log_flag;
 
+typedef enum
+{
+  TYPE_INT,
+  ARRAY_INT,
+  ARRAY_CHAR,
+  ARRAY_STRING,
+} neko_message_args_type;
+
+typedef struct
+{
+  neko_message_args_type type;
+  union
+  {
+    int integer;
+    int *array_integer;
+    char *array_character;
+    char **array_string;
+  } content;
+} neko_message_args;
+
 typedef struct
 {
   int x, y, width, height;
@@ -107,8 +127,8 @@ void neko_handle_map(xcb_generic_event_t *event);
 void neko_handle_key_press(xcb_generic_event_t *event);
 
 /* window */
-void neko_split_toggle();
-void neko_close_window();
+void neko_split_toggle(neko_message_args args);
+void neko_close_window(neko_message_args args);
 void neko_set_focus_color(xcb_window_t window, bool focus);
 void neko_set_focus(xcb_drawable_t window);
 void neko_arrange();
@@ -123,6 +143,7 @@ void neko_remove_client(xcb_window_t window);
 int neko_find_monitor_for_window(int wx, int wy);
 int neko_get_monitor_under_cursor();
 void neko_update_monitors();
+void neko_switch_stack(neko_message_args args);
 void neko_setup();
 void neko_run();
 
@@ -136,7 +157,7 @@ void *neko_create_bar(void *args);
 void neko_execute_bar(neko_bar_args args);
 
 /* main */
-void neko_exit();
+void neko_exit(neko_message_args args);
 void neko_cleanup(int sig);
 
 #endif //! NEKO_H

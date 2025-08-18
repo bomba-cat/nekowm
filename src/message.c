@@ -2,9 +2,25 @@
 
 int neko_sock = -1;
 
-static char valid[3][255] = {"--split-toggle", "--exit-neko", "--close-focused"};
+void neko_bar_message(neko_message_args args)
+{
+  UNUSED(args);
+  neko_execute_bar((neko_bar_args){0, 0, 1920, BAR_HEIGHT});
+}
+
+static char valid[4][255] = {
+    "--split-toggle",
+    "--exit-neko",
+    "--close-focused",
+    "--start-bar",
+};
 #ifdef SOCKET
-static void (*validfun[3])() = {neko_split_toggle, neko_exit, neko_close_window};
+static void (*validfun[4])(neko_message_args args) = {
+    neko_split_toggle,
+    neko_exit,
+    neko_close_window,
+    neko_bar_message,
+};
 #endif
 
 void neko_init_socket()
@@ -98,7 +114,7 @@ void neko_scan_message()
   {
     if (!strcmp(buf, valid[j]))
     {
-      validfun[j]();
+      validfun[j]((neko_message_args){});
     }
   }
 #else
