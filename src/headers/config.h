@@ -26,11 +26,16 @@
 #define MOD2 XCB_MOD_MASK_SHIFT
 #define MOD3 XCB_MOD_MASK_CONTROL
 #define MOD4 XCB_MOD_MASK_4
-static const neko_keybind keybinds[] = {{MOD1, XK_Return, "kitty"},
-                                        {MOD1, XK_d, "dmenu_run"},
-                                        {MOD1 | MOD2, XK_e, "nekowm --exit-neko"},
-                                        {MOD1, XK_space, "nekowm --split-toggle"},
-                                        {MOD1, XK_t, "nekowm --close-focused"}};
+static const neko_keybind keybinds[] = {
+    {MOD1, XK_Return, "kitty"},
+    {MOD1, XK_d, "dmenu_run"},
+    {MOD1 | MOD2, XK_e, "nekowm --exit-neko"},
+    {MOD1, XK_space, "nekowm --split-toggle"},
+    {MOD1, XK_t, "nekowm --close-focused"},
+    {MOD3 | MOD2, XK_Left, "playerctl previous"},
+    {MOD3 | MOD2, XK_Right, "playerctl next"},
+    {MOD3 | MOD2, XK_Down, "playerctl play-pause"},
+};
 
 /* Comment these out to disable them */
 #define SOCKET
