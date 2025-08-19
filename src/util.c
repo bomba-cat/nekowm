@@ -157,6 +157,7 @@ void neko_setup()
   selected_stacks = calloc(monitor_count, sizeof(int));
   for (int i = 0; i < monitor_count; i++)
   {
+    neko_execute_bar((neko_bar_args){monitors[i].x, 0, monitors[i].width, BAR_HEIGHT});
     selected_stacks[i] = i;
   }
   xcb_flush(connection);
@@ -205,7 +206,6 @@ int neko_get_monitor_under_cursor()
 void neko_run()
 {
   xcb_generic_event_t *ev;
-  int x = 0;
   while (running)
   {
     neko_scan_message();
@@ -217,11 +217,6 @@ void neko_run()
     }
     else
     {
-      if (!x)
-      {
-        neko_execute_bar((neko_bar_args){0, 0, 1920, BAR_HEIGHT});
-      }
-      x++;
       usleep(10000);
     }
   }

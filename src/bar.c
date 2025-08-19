@@ -1,4 +1,5 @@
 #include "headers/neko.h"
+#include <xcb/xproto.h>
 
 void *neko_create_bar(void *args)
 {
@@ -21,37 +22,48 @@ void *neko_create_bar(void *args)
   uint32_t value_list[] = {1};
 
   /* TODO: Bar Border */
-  xcb_create_window(conn, XCB_COPY_FROM_PARENT, window, scr->root, bar_args->x, bar_args->y,
-                    bar_args->width, bar_args->height, 0, XCB_WINDOW_CLASS_INPUT_OUTPUT,
+  xcb_create_window(conn, XCB_COPY_FROM_PARENT, window, scr->root, bar_args->x + BORDER,
+                    bar_args->y + BORDER, bar_args->width - BORDER * 4,
+                    bar_args->height - BORDER * 2, BORDER, XCB_WINDOW_CLASS_INPUT_OUTPUT,
                     scr->root_visual, value_mask, value_list);
 
+  xcb_font_t font = xcb_generate_id(conn);
+  xcb_open_font(conn, font, strlen("fixed"), "fixed");
+
   xcb_gcontext_t gc = xcb_generate_id(conn);
-  uint32_t gc_values[] = {scr->white_pixel, 0};
-  xcb_create_gc(conn, gc, window, XCB_GC_FOREGROUND | XCB_GC_LINE_WIDTH, gc_values);
+  uint32_t values[] = {scr->white_pixel, font};
+  xcb_create_gc(conn, gc, window, XCB_GC_FOREGROUND | XCB_GC_FONT, values);
 
   xcb_map_window(conn, window);
   xcb_flush(conn);
 
   xcb_rectangle_t rect = {0, 0, bar_args->width, bar_args->height};
-  xcb_poly_fill_rectangle(conn, window, gc, 1, &rect);
-
-  xcb_flush(conn);
+  char *msg = "Hello World";
 
   xcb_generic_event_t *event;
-  while ((event = xcb_wait_for_event(conn)))
+  int running = 1;
+  while (running)
   {
-    switch (event->response_type & ~0x80)
+    xcb_poly_fill_rectangle(conn, window, gc, 1, &rect);
+    xcb_image_text_8(conn, strlen(msg), window, gc, bar_args->width / 2, bar_args->height / 2, msg);
+    xcb_flush(conn);
+
+    while ((event = xcb_poll_for_event(conn)))
     {
-    case XCB_KEY_PRESS:
-    {
+      switch (event->response_type & ~0x80)
+      {
+      case XCB_KEY_PRESS:
+        running = 0;
+        break;
+      }
       free(event);
-      xcb_disconnect(conn);
-      break;
     }
-    }
-    free(event);
+
+    usleep(50000);
   }
 
+  xcb_close_font(conn, font);
+  xcb_free_gc(conn, gc);
   xcb_disconnect(conn);
   neko_log("Exiting bar thread", WARNING);
   free(bar_args);
