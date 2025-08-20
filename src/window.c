@@ -2,9 +2,8 @@
 
 neko_stack *stacks = NULL;
 
-void neko_split_toggle(neko_message_args args)
+void neko_split_toggle()
 {
-  UNUSED(args);
   int curr_mon = neko_get_monitor_under_cursor();
   int selected_stack = selected_stacks[curr_mon];
 
@@ -14,9 +13,8 @@ void neko_split_toggle(neko_message_args args)
   neko_arrange();
 }
 
-void neko_close_window(neko_message_args args)
+void neko_close_window()
 {
-  UNUSED(args);
   xcb_intern_atom_cookie_t protocol_cookie = xcb_intern_atom(connection, 1, 12, "WM_PROTOCOLS");
   xcb_intern_atom_cookie_t delete_cookie = xcb_intern_atom(connection, 0, 16, "WM_DELETE_WINDOW");
 
@@ -174,4 +172,25 @@ void neko_arrange()
     }
   }
   xcb_flush(connection);
+  return;
+}
+
+void neko_unmap_stack(neko_stack *stack)
+{
+  for (int i = 0; i < stack->client_count; i++)
+  {
+    xcb_unmap_window(connection, stack->clients[stack->focused_client].window);
+  }
+  xcb_flush(connection);
+  return;
+}
+
+void neko_map_stack(neko_stack *stack)
+{
+  for (int i = 0; i < stack->client_count; i++)
+  {
+    xcb_map_window(connection, stack->clients[stack->focused_client].window);
+  }
+  xcb_flush(connection);
+  return;
 }

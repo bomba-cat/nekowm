@@ -4,6 +4,7 @@ sig_atomic_t running = 1;
 int *selected_stacks = NULL;
 neko_monitor *monitors = NULL;
 int monitor_count;
+int stack_count;
 
 void neko_die(const char *msg)
 {
@@ -53,9 +54,10 @@ void neko_spawn(const char *cmd)
   wait(NULL);
 }
 
-void neko_setup_stacks(int stack_count)
+void neko_setup_stacks(int stack_c)
 {
-  stacks = realloc(stacks, sizeof(neko_stack) * stack_count);
+  stacks = realloc(stacks, sizeof(neko_stack) * stack_c);
+  stack_count = stack_c;
 }
 
 void neko_add_client(xcb_window_t window)
@@ -203,6 +205,38 @@ int neko_get_monitor_under_cursor()
   return 0;
 }
 
+void neko_next_stack()
+{
+  int monitor = neko_get_monitor_under_cursor();
+
+  neko_stack *stack = &stacks[selected_stacks[monitor]];
+  neko_unmap_stack(stack);
+
+  selected_stacks[monitor] = (selected_stacks[monitor] + 1) % stack_count;
+
+  stack = &stacks[selected_stacks[monitor]];
+  neko_map_stack(stack);
+
+  neko_arrange();
+  return;
+}
+
+void neko_prev_stack()
+{
+  int monitor = neko_get_monitor_under_cursor();
+
+  neko_stack *stack = &stacks[selected_stacks[monitor]];
+  neko_unmap_stack(stack);
+
+  selected_stacks[monitor] = (selected_stacks[monitor] - 1) % stack_count;
+
+  stack = &stacks[selected_stacks[monitor]];
+  neko_map_stack(stack);
+
+  neko_arrange();
+  return;
+}
+
 void neko_run()
 {
   xcb_generic_event_t *ev;
@@ -222,11 +256,7 @@ void neko_run()
   }
 }
 
-void neko_exit(neko_message_args args)
-{
-  UNUSED(args);
-  neko_cleanup(0);
-}
+void neko_exit() { neko_cleanup(0); }
 
 void neko_cleanup(int sig)
 {

@@ -35,6 +35,8 @@ static const neko_keybind keybinds[] = {
     {MOD3 | MOD2, XK_Left, "playerctl previous"},
     {MOD3 | MOD2, XK_Right, "playerctl next"},
     {MOD3 | MOD2, XK_Down, "playerctl play-pause"},
+    {MOD1 | MOD3, XK_Right, "nekowm --next-stack"},
+    {MOD1 | MOD3, XK_Left, "nekowm --previous-stack"},
 };
 
 /* Comment these out to disable them */

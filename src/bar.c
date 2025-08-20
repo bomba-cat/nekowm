@@ -38,14 +38,14 @@ void *neko_create_bar(void *args)
   xcb_flush(conn);
 
   xcb_rectangle_t rect = {0, 0, bar_args->width, bar_args->height};
-  char *msg = "Hello World";
+  char *msg = "Welcome to NekoWM!";
 
   xcb_generic_event_t *event;
   int running = 1;
   while (running)
   {
     xcb_poly_fill_rectangle(conn, window, gc, 1, &rect);
-    xcb_image_text_8(conn, strlen(msg), window, gc, bar_args->width / 2, bar_args->height / 2, msg);
+    xcb_image_text_8(conn, strlen(msg), window, gc, 15, bar_args->height / 2, msg);
     xcb_flush(conn);
 
     while ((event = xcb_poll_for_event(conn)))
