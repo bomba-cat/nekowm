@@ -118,6 +118,7 @@ void neko_map_stack(neko_stack *stack);
 
 /* util */
 void neko_die(const char *msg);
+long neko_get_memory_usage();
 neko_command neko_get_arguments(const char *cmd);
 void neko_spawn(const char *cmd);
 void neko_setup_stacks(int stack_c);

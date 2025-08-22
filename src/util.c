@@ -12,6 +12,27 @@ void neko_die(const char *msg)
   exit(1);
 }
 
+long neko_get_memory_usage()
+{
+  FILE *file = fopen("/proc/self/status", "r");
+  if (!file) return -1;
+
+  char line[256];
+  long memory = -1;
+
+  while (fgets(line, sizeof(line), file))
+  {
+    if (strncmp(line, "VmRSS:", 6) == 0)
+    {
+      sscanf(line + 6, "%ld", &memory);
+      break;
+    }
+  }
+
+  fclose(file);
+  return memory;
+}
+
 neko_command neko_get_arguments(const char *cmd)
 {
   char *copy = strdup(cmd);
@@ -213,7 +234,13 @@ void neko_next_stack()
   neko_unmap_stack(stack);
 
   selected_stacks[monitor] = (selected_stacks[monitor] + 1) % stack_count;
-
+  for (int i = 0; i < monitor_count; i++)
+  {
+    if (selected_stacks[monitor] == selected_stacks[i] && monitor != i && monitor > -1)
+    {
+      selected_stacks[monitor] = (selected_stacks[monitor] + 1) % stack_count;
+    }
+  }
   stack = &stacks[selected_stacks[monitor]];
   neko_map_stack(stack);
 
@@ -229,6 +256,13 @@ void neko_prev_stack()
   neko_unmap_stack(stack);
 
   selected_stacks[monitor] = (selected_stacks[monitor] - 1) % stack_count;
+  for (int i = 0; i < monitor_count; i++)
+  {
+    if (selected_stacks[monitor] == selected_stacks[i] && monitor != i && monitor > -1)
+    {
+      selected_stacks[monitor] = (selected_stacks[monitor] - 1) % stack_count;
+    }
+  }
 
   stack = &stacks[selected_stacks[monitor]];
   neko_map_stack(stack);
