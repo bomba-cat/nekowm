@@ -39,8 +39,8 @@ static const neko_keybind keybinds[] = {
     {MOD1 | MOD3, XK_Left, "nekowm --previous-stack"},
     {MOD1, XK_Left, "nekowm --focus-previous"},
     {MOD1, XK_Right, "nekowm --focus-next"},
-    {MOD1, XK_F11, "pactl set-sink-volume @DEFAUL_SINK@ +5%"},
-    {MOD1, XK_F10, "pactl set-sink-volume @DEFAUL_SINK@ -5%"},
+    {MOD1, XK_F11, "pactl set-sink-volume @DEFAULT_SINK@ +5%"},
+    {MOD1, XK_F10, "pactl set-sink-volume @DEFAULT_SINK@ -5%"},
 };
 
 /* Comment these out to disable them */

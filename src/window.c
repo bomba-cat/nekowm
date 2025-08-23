@@ -95,7 +95,7 @@ void neko_next_focus()
 
   stack->focused_client++;
 
-  xcb_set_input_focus(connection, XCB_INPUT_FOCUS_POINTER_ROOT,
+  xcb_set_input_focus(connection, XCB_INPUT_FOCUS_FOLLOW_KEYBOARD,
                       stack->clients[stack->focused_client].window, XCB_CURRENT_TIME);
   xcb_flush(connection);
 }
@@ -109,7 +109,7 @@ void neko_prev_focus()
 
   stack->focused_client--;
 
-  xcb_set_input_focus(connection, XCB_INPUT_FOCUS_POINTER_ROOT,
+  xcb_set_input_focus(connection, XCB_INPUT_FOCUS_FOLLOW_KEYBOARD,
                       stack->clients[stack->focused_client].window, XCB_CURRENT_TIME);
   xcb_flush(connection);
 }
