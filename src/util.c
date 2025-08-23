@@ -115,13 +115,20 @@ void neko_remove_client(xcb_window_t window)
   int curr_mon = neko_get_monitor_under_cursor();
   int selected_stack = selected_stacks[curr_mon];
 
+  if (!stacks[selected_stack].client_count)
+  {
+    neko_log("No clients found", WARNING);
+    return;
+  }
+
   int j = 0;
   for (int i = 0; i < stacks[selected_stack].client_count; i++)
   {
     if (stacks[selected_stack].clients[i].window != window)
     {
-      stacks[selected_stack].clients[j++] = stacks[selected_stack].clients[i];
+      stacks[selected_stack].clients[j] = stacks[selected_stack].clients[i];
       stacks[selected_stack].clients[j].index = j;
+      j++;
     }
   }
   stacks[selected_stack].client_count = j;
