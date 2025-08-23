@@ -112,6 +112,8 @@ void neko_split_toggle();
 void neko_close_window();
 void neko_set_focus_color(xcb_window_t window, bool focus);
 void neko_set_focus(xcb_drawable_t window);
+void neko_next_focus();
+void neko_prev_focus();
 void neko_arrange();
 void neko_unmap_stack(neko_stack *stack);
 void neko_map_stack(neko_stack *stack);

@@ -32,11 +32,15 @@ static const neko_keybind keybinds[] = {
     {MOD1 | MOD2, XK_e, "nekowm --exit-neko"},
     {MOD1, XK_space, "nekowm --split-toggle"},
     {MOD1, XK_t, "nekowm --close-focused"},
-    {MOD3 | MOD2, XK_Left, "playerctl previous"},
-    {MOD3 | MOD2, XK_Right, "playerctl next"},
-    {MOD3 | MOD2, XK_Down, "playerctl play-pause"},
+    {MOD3 | MOD4, XK_Left, "playerctl previous"},
+    {MOD3 | MOD4, XK_Right, "playerctl next"},
+    {MOD3 | MOD4, XK_Down, "playerctl play-pause"},
     {MOD1 | MOD3, XK_Right, "nekowm --next-stack"},
     {MOD1 | MOD3, XK_Left, "nekowm --previous-stack"},
+    {MOD1, XK_Left, "nekowm --focus-previous"},
+    {MOD1, XK_Right, "nekowm --focus-next"},
+    {MOD1, XK_F11, "pactl set-sink-volume @DEFAUL_SINK@ +5%"},
+    {MOD1, XK_F10, "pactl set-sink-volume @DEFAUL_SINK@ -5%"},
 };
 
 /* Comment these out to disable them */

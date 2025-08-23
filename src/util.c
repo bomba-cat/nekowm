@@ -1,4 +1,5 @@
 #include "headers/neko.h"
+#include <xcb/xcb.h>
 
 sig_atomic_t running = 1;
 int *selected_stacks = NULL;
@@ -15,7 +16,13 @@ void neko_die(const char *msg)
 long neko_get_memory_usage()
 {
   FILE *file = fopen("/proc/self/status", "r");
-  if (!file) return -1;
+  if (!file)
+  {
+    neko_log("Unable to access `/proc/self/status`. This could also be the result of an modified "
+             "or different Kernel.",
+             WARNING);
+    return -1;
+  }
 
   char line[256];
   long memory = -1;
@@ -114,6 +121,7 @@ void neko_remove_client(xcb_window_t window)
     if (stacks[selected_stack].clients[i].window != window)
     {
       stacks[selected_stack].clients[j++] = stacks[selected_stack].clients[i];
+      stacks[selected_stack].clients[j].index = j;
     }
   }
   stacks[selected_stack].client_count = j;
@@ -150,7 +158,10 @@ void neko_update_monitors()
         xcb_randr_get_crtc_info(connection, crtcs[i], res->config_timestamp);
     xcb_randr_get_crtc_info_reply_t *crtc =
         xcb_randr_get_crtc_info_reply(connection, crtc_cookie, NULL);
-    if (!crtc) continue;
+    if (!crtc)
+    {
+      continue;
+    }
 
     if (crtc->num_outputs > 0 && crtc->width > 0 && crtc->height > 0)
     {
@@ -209,6 +220,7 @@ int neko_get_monitor_under_cursor()
   if (!pointer_reply)
   {
     neko_log("Failed to get pointer reply", ERROR);
+    free(pointer_reply);
     return 0;
   }
 
@@ -223,6 +235,7 @@ int neko_get_monitor_under_cursor()
       return i;
     }
   }
+  free(pointer_reply);
   return 0;
 }
 
@@ -304,4 +317,5 @@ void neko_cleanup(int sig)
     neko_sock = -1;
   }
   if (log_file) fclose(log_file);
+  xcb_disconnect(connection);
 }

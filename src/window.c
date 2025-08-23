@@ -1,4 +1,6 @@
 #include "headers/neko.h"
+#include <xcb/xcb.h>
+#include <xcb/xproto.h>
 
 neko_stack *stacks = NULL;
 
@@ -84,6 +86,34 @@ void neko_set_focus(xcb_drawable_t window)
   }
 }
 
+void neko_next_focus()
+{
+  int monitor = neko_get_monitor_under_cursor();
+  int selected_stack = selected_stacks[monitor];
+
+  neko_stack *stack = &stacks[selected_stack];
+
+  stack->focused_client++;
+
+  xcb_set_input_focus(connection, XCB_INPUT_FOCUS_POINTER_ROOT,
+                      stack->clients[stack->focused_client].window, XCB_CURRENT_TIME);
+  xcb_flush(connection);
+}
+
+void neko_prev_focus()
+{
+  int monitor = neko_get_monitor_under_cursor();
+  int selected_stack = selected_stacks[monitor];
+
+  neko_stack *stack = &stacks[selected_stack];
+
+  stack->focused_client--;
+
+  xcb_set_input_focus(connection, XCB_INPUT_FOCUS_POINTER_ROOT,
+                      stack->clients[stack->focused_client].window, XCB_CURRENT_TIME);
+  xcb_flush(connection);
+}
+
 void neko_arrange()
 {
   for (int m = 0; m < monitor_count; m++)
@@ -121,7 +151,18 @@ void neko_arrange()
           xcb_get_window_attributes(connection, client->window);
       xcb_get_window_attributes_reply_t *attr =
           xcb_get_window_attributes_reply(connection, cookie, NULL);
-      if (!attr) continue;
+      if (!attr)
+      {
+        free(attr);
+        continue;
+      }
+
+      if (attr->map_state != XCB_MAP_STATE_VIEWABLE)
+      {
+        neko_log("Unviewable window", INFO);
+        free(attr);
+        continue;
+      }
 
       if (attr->override_redirect)
       {
@@ -169,6 +210,7 @@ void neko_arrange()
       uint32_t mask = XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y | XCB_CONFIG_WINDOW_WIDTH |
                       XCB_CONFIG_WINDOW_HEIGHT | XCB_CONFIG_WINDOW_BORDER_WIDTH;
       xcb_configure_window(connection, client->window, mask, values);
+      free(attr);
     }
   }
   xcb_flush(connection);
@@ -179,7 +221,7 @@ void neko_unmap_stack(neko_stack *stack)
 {
   for (int i = 0; i < stack->client_count; i++)
   {
-    xcb_unmap_window(connection, stack->clients[stack->focused_client].window);
+    xcb_unmap_window(connection, stack->clients[i].window);
   }
   xcb_flush(connection);
   return;
@@ -189,7 +231,7 @@ void neko_map_stack(neko_stack *stack)
 {
   for (int i = 0; i < stack->client_count; i++)
   {
-    xcb_map_window(connection, stack->clients[stack->focused_client].window);
+    xcb_map_window(connection, stack->clients[i].window);
   }
   xcb_flush(connection);
   return;
