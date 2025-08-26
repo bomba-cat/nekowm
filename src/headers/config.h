@@ -41,6 +41,7 @@ static const neko_keybind keybinds[] = {
     {MOD1, XK_Right, "nekowm --focus-next"},
     {MOD1, XK_F11, "pactl set-sink-volume @DEFAULT_SINK@ +5%"},
     {MOD1, XK_F10, "pactl set-sink-volume @DEFAULT_SINK@ -5%"},
+    {MOD1, XK_f, "nekowm --fullscreen"},
 };
 
 /* Comment these out to disable them */

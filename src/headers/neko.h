@@ -71,6 +71,7 @@ typedef struct
 {
   int index;
   int focused_client;
+  xcb_window_t fullscreen_client;
   int client_count;
   neko_client *clients;
 } neko_stack;
@@ -109,6 +110,7 @@ void neko_handle_key_press(xcb_generic_event_t *event);
 
 /* window */
 void neko_split_toggle();
+void neko_fullscreen();
 void neko_close_window();
 void neko_set_focus_color(xcb_window_t window, bool focus);
 void neko_set_focus(xcb_drawable_t window);

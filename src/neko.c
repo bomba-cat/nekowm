@@ -14,6 +14,10 @@ static void print_help(void)
          "  --split-toggle     Split the toggle of the current selected window\n"
          "  --exit-neko        Kill the window manager\n"
          "  --close-focused    Closes the currently focused window\n"
+         "  --next-stack       Switch to the next stack\n"
+         "  --previous-stack   Switch to the previous stack\n"
+         "  --focus-next       Change focus to the next window on the stack\n"
+         "  --focus-previous   Change focus to the previous window on the stack\n"
          "  STACK_COUNT        Number of stacks to create [default: 10]\n");
 }
 

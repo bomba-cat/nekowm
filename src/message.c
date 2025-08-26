@@ -4,12 +4,12 @@ int neko_sock = -1;
 
 static char valid[][255] = {
     "--split-toggle",   "--exit-neko",  "--close-focused",  "--next-stack",
-    "--previous-stack", "--focus-next", "--focus-previous",
+    "--previous-stack", "--focus-next", "--focus-previous", "--fullscreen",
 };
 #ifdef SOCKET
 static void (*validfun[])() = {
     neko_split_toggle, neko_exit,       neko_close_window, neko_next_stack,
-    neko_prev_stack,   neko_next_focus, neko_prev_focus,
+    neko_prev_stack,   neko_next_focus, neko_prev_focus,   neko_fullscreen,
 };
 #endif
 

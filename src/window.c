@@ -1,5 +1,4 @@
 #include "headers/neko.h"
-#include <xcb/xcb.h>
 #include <xcb/xproto.h>
 
 neko_stack *stacks = NULL;
@@ -12,6 +11,25 @@ void neko_split_toggle()
   int focused_client = stacks[selected_stack].focused_client;
   stacks[selected_stack].clients[focused_client].split =
       !stacks[selected_stack].clients[focused_client].split;
+  neko_arrange();
+}
+
+void neko_fullscreen()
+{
+  int curr_mon = neko_get_monitor_under_cursor();
+  int selected_stack = selected_stacks[curr_mon];
+
+  int focused_client = stacks[selected_stack].focused_client;
+  xcb_window_t window = stacks[selected_stack].clients[focused_client].window;
+  xcb_window_t full_window = stacks[selected_stack].fullscreen_client;
+  if (full_window != window)
+  {
+    stacks[selected_stack].fullscreen_client = window;
+  }
+  else
+  {
+    stacks[selected_stack].fullscreen_client = 0;
+  }
   neko_arrange();
 }
 
@@ -166,7 +184,6 @@ void neko_arrange()
 
       if (attr->override_redirect)
       {
-        // xcb_map_window(connection, client->window);
         free(attr);
         continue;
       }
@@ -174,7 +191,16 @@ void neko_arrange()
       client->x = x + GAP;
       client->y = y + GAP;
 
-      if (client->split == NEKO_HORIZONTAL)
+      if (stacks[selected_stack].fullscreen_client == client->window)
+      {
+        client->width = monitors[m].width;
+        client->height = monitors[m].height;
+        client->x = monitors[m].x;
+        client->y = monitors[m].y;
+        uint32_t values[] = {XCB_STACK_MODE_ABOVE};
+        xcb_configure_window(connection, client->window, XCB_CONFIG_WINDOW_STACK_MODE, values);
+      }
+      else if (client->split == NEKO_HORIZONTAL)
       {
         client->width = (w / 2) - 2 * GAP - 2 * BORDER;
         client->height = h - 2 * GAP - 2 * BORDER;

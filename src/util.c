@@ -1,5 +1,4 @@
 #include "headers/neko.h"
-#include <xcb/xcb.h>
 
 sig_atomic_t running = 1;
 int *selected_stacks = NULL;
@@ -256,7 +255,8 @@ void neko_next_stack()
   selected_stacks[monitor] = (selected_stacks[monitor] + 1) % stack_count;
   for (int i = 0; i < monitor_count; i++)
   {
-    if (selected_stacks[monitor] == selected_stacks[i] && monitor != i && monitor > -1)
+    if (selected_stacks[monitor] == selected_stacks[i] && monitor != i &&
+        selected_stacks[monitor] > -1)
     {
       selected_stacks[monitor] = (selected_stacks[monitor] + 1) % stack_count;
     }
@@ -278,7 +278,8 @@ void neko_prev_stack()
   selected_stacks[monitor] = (selected_stacks[monitor] - 1) % stack_count;
   for (int i = 0; i < monitor_count; i++)
   {
-    if (selected_stacks[monitor] == selected_stacks[i] && monitor != i && monitor > -1)
+    if (selected_stacks[monitor] == selected_stacks[i] && monitor != i &&
+        selected_stacks[monitor] > -1)
     {
       selected_stacks[monitor] = (selected_stacks[monitor] - 1) % stack_count;
     }
