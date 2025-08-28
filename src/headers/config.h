@@ -10,7 +10,7 @@
  */
 #define BAR_POSITION 1
 #define BAR_COLOR 0x2a2c2e
-#define BAR_HEIGHT 25
+#define BAR_HEIGHT 30
 #define BORDER 4
 #define FOCUSED 0x9ea7aa
 #define UNFOCUSED 0x2a2c2e
