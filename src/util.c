@@ -226,7 +226,6 @@ int neko_get_monitor_under_cursor()
   if (!pointer_reply)
   {
     neko_log("Failed to get pointer reply", ERROR);
-    free(pointer_reply);
     return 0;
   }
 
@@ -238,6 +237,7 @@ int neko_get_monitor_under_cursor()
     if (x >= monitors[i].x && x < monitors[i].x + monitors[i].width && y >= monitors[i].y &&
         y < monitors[i].y + monitors[i].height)
     {
+      free(pointer_reply);
       return i;
     }
   }

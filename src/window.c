@@ -171,7 +171,6 @@ void neko_arrange()
           xcb_get_window_attributes_reply(connection, cookie, NULL);
       if (!attr)
       {
-        free(attr);
         continue;
       }
 
@@ -193,8 +192,8 @@ void neko_arrange()
 
       if (stacks[selected_stack].fullscreen_client == client->window)
       {
-        client->width = monitors[m].width;
-        client->height = monitors[m].height;
+        client->width = monitors[m].width - 2 * BORDER;
+        client->height = monitors[m].height - 2 * BORDER;
         client->x = monitors[m].x;
         client->y = monitors[m].y;
         uint32_t values[] = {XCB_STACK_MODE_ABOVE};
