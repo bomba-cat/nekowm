@@ -1,43 +1,28 @@
 #include "headers/neko.h"
 
 xcb_rectangle_t rect;
-char stack_msg[25];
-char memory_msg[255];
 char *msg = "Welcome to NekoWM!";
 
 void draw(xcb_connection_t *conn, xcb_window_t window, xcb_gcontext_t gc, neko_bar_args *bar_args)
 {
+  char stack_msg[25];
+  char memory_msg[255];
   int monitor = neko_find_monitor_for_window(bar_args->x, bar_args->y);
   xcb_change_gc(conn, gc, XCB_GC_FOREGROUND, (uint32_t[]){BAR_COLOR});
   xcb_poly_fill_rectangle(conn, window, gc, 1, &rect);
-  xcb_change_gc(conn, gc, XCB_GC_FOREGROUND, (uint32_t[]){0xFFFFFF});
+  xcb_change_gc(conn, gc, XCB_GC_FOREGROUND | XCB_GC_BACKGROUND, (uint32_t[]){0xFFFFFF, BAR_COLOR});
 
-  snprintf(stack_msg, sizeof(stack_msg), "Stack number: %d", selected_stacks[monitor]);
-  uint8_t *stack_items = malloc(strlen(stack_msg) + 2);
-  stack_items[0] = 0;
-  stack_items[1] = strlen(stack_msg);
-  memcpy(stack_items + 2, stack_msg, strlen(stack_msg));
-  xcb_poly_text_8(conn, window, gc, bar_args->width / 2 - 50, bar_args->y / 2, sizeof(stack_items),
-                  stack_items);
+  snprintf(stack_msg, sizeof(stack_msg), "|%d|", selected_stacks[monitor]);
+  xcb_image_text_8(conn, strlen(stack_msg), window, gc, bar_args->width / 2 - 14,
+                   bar_args->height / 2, stack_msg);
 
   snprintf(memory_msg, sizeof(memory_msg), "NekoWM Memory Usage: %ld KB", neko_get_memory_usage());
-  uint8_t *memory_items = malloc(strlen(memory_msg) + 2);
-  memory_items[0] = 0;
-  memory_items[1] = strlen(memory_msg);
-  memcpy(memory_items + 2, memory_msg, strlen(memory_msg));
-  xcb_poly_text_8(conn, window, gc, bar_args->width - 250, bar_args->y / 2, sizeof(memory_items),
-                  memory_items);
+  xcb_image_text_8(conn, strlen(memory_msg), window, gc, bar_args->width - 200,
+                   bar_args->height / 2, memory_msg);
 
-  uint8_t *items = malloc(strlen(msg) + 2);
-  items[0] = 0;
-  items[1] = strlen(msg);
-  memcpy(items + 2, msg, strlen(msg));
-  xcb_poly_text_8(conn, window, gc, 15, bar_args->height / 2, strlen(msg), items);
+  xcb_image_text_8(conn, strlen(msg), window, gc, 15, bar_args->height / 2, msg);
 
   xcb_flush(conn);
-  free(stack_items);
-  free(memory_items);
-  free(items);
 }
 
 void *neko_create_bar(void *args)
@@ -75,7 +60,7 @@ void *neko_create_bar(void *args)
   xcb_open_font(conn, font, strlen("fixed"), "fixed");
 
   gc = xcb_generate_id(conn);
-  uint32_t values[] = {(uint32_t)BAR_COLOR, font};
+  uint32_t values[] = {BAR_COLOR, font};
   xcb_create_gc(conn, gc, window, XCB_GC_FOREGROUND | XCB_GC_FONT, values);
 
   xcb_map_window(conn, window);
@@ -96,8 +81,10 @@ void *neko_create_bar(void *args)
       switch (event->response_type & ~0x80)
       {
       case XCB_KEY_PRESS:
+      {
         running = 0;
         break;
+      }
       }
       free(event);
     }
@@ -105,7 +92,7 @@ void *neko_create_bar(void *args)
     {
       draw(conn, window, gc, bar_args);
     }
-    usleep(5000000);
+    usleep(100000);
   }
 
   xcb_close_font(conn, font);
