@@ -13,6 +13,14 @@ static void (*validfun[])() = {
 };
 #endif
 
+void neko_scan_message_thread()
+{
+  pthread_t message_thread;
+
+  pthread_create(&message_thread, NULL, neko_scan_message, NULL);
+  pthread_detach(message_thread);
+}
+
 void neko_init_socket()
 {
 #ifdef SOCKET
@@ -20,8 +28,6 @@ void neko_init_socket()
   struct sockaddr_un addr;
   memset(&addr, 0, sizeof(addr));
   neko_sock = socket(AF_UNIX, SOCK_DGRAM, 0);
-  int flags = fcntl(neko_sock, F_GETFL, 0);
-  fcntl(neko_sock, F_SETFL, flags | O_NONBLOCK);
 
   addr.sun_family = AF_UNIX;
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
@@ -79,35 +85,32 @@ passed:
   return 0;
 }
 
-void neko_scan_message()
+void *neko_scan_message(void *data)
 {
+  UNUSED(data);
 #ifdef SOCKET
-  char buf[256];
-  ssize_t bytes = recvfrom(neko_sock, buf, sizeof(buf) - 1, MSG_DONTWAIT, NULL, NULL);
-  if (bytes == -1)
+  while (true)
   {
-    if (errno == EAGAIN || errno == EWOULDBLOCK)
+    char buf[256];
+    ssize_t bytes = recvfrom(neko_sock, buf, sizeof(buf) - 1, 0, NULL, NULL);
+    if (bytes == -1)
     {
-      return;
+      return NULL;
     }
-    else
-    {
-      perror("recvfrom");
-      return;
-    }
-  }
-  buf[bytes] = '\0';
-  neko_log("Received message", INFO);
-  neko_log(buf, INFO);
+    buf[bytes] = '\0';
+    neko_log("Received message", INFO);
+    neko_log(buf, INFO);
 
-  for (long unsigned int j = 0; j < sizeof(valid) / sizeof(valid[0]); j++)
-  {
-    if (!strcmp(buf, valid[j]))
+    for (long unsigned int j = 0; j < sizeof(valid) / sizeof(valid[0]); j++)
     {
-      validfun[j]();
+      if (!strcmp(buf, valid[j]))
+      {
+        validfun[j]();
+      }
     }
   }
+  return NULL;
 #else
-  return;
+  return NULL;
 #endif
 }

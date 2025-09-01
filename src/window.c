@@ -1,5 +1,4 @@
 #include "headers/neko.h"
-#include <xcb/xproto.h>
 
 neko_stack *stacks = NULL;
 
@@ -146,16 +145,13 @@ void neko_arrange()
     int x = monitors[m].x, y;
     int w = monitors[m].width, h;
 #ifdef BAR
-    if (BAR_POSITION)
-    {
-      h = monitors[m].height - BAR_HEIGHT;
-      y = monitors[m].y + BAR_HEIGHT;
-    }
-    else
-    {
-      h = monitors[m].height - BAR_HEIGHT;
-      y = monitors[m].y;
-    }
+#if BAR_POSITION
+    h = monitors[m].height - BAR_HEIGHT;
+    y = monitors[m].y + BAR_HEIGHT;
+#else
+    h = monitors[m].height - BAR_HEIGHT;
+    y = monitors[m].y;
+#endif
 #else
     h = monitors[m].height;
     y = monitors[m].y;
@@ -177,12 +173,6 @@ void neko_arrange()
       if (attr->map_state != XCB_MAP_STATE_VIEWABLE)
       {
         neko_log("Unviewable window", INFO);
-        free(attr);
-        continue;
-      }
-
-      if (attr->override_redirect)
-      {
         free(attr);
         continue;
       }

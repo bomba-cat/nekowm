@@ -37,6 +37,11 @@ NekoWM is designed to be a single, self-contained binary with:
 - No runtime dependencies (beyond X11 libraries)
 - No config files
 - No external daemons
+NekoWM is designed to only manage your windows, not more or less. This means:
+- Basic messages for window operations like
+  - Map window
+  - Fullscreen window
+  -
 
 ## Building
 ### Dependencies

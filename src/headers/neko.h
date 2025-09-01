@@ -18,7 +18,6 @@
 #include <xcb/xcb_keysyms.h>
 #include <xcb/xproto.h>
 
-/* found this in xwm */
 #define UNUSED(x) (void)(x)
 
 typedef enum
@@ -138,7 +137,8 @@ void neko_run();
 
 /* message */
 void neko_init_socket();
-void neko_scan_message();
+void *neko_scan_message(void *data);
+void neko_scan_message_thread();
 int neko_send_message(int argc, char **argv);
 
 /* bar */

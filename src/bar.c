@@ -10,7 +10,8 @@ void draw(xcb_connection_t *conn, xcb_window_t window, xcb_gcontext_t gc, neko_b
   int monitor = neko_find_monitor_for_window(bar_args->x, bar_args->y);
   xcb_change_gc(conn, gc, XCB_GC_FOREGROUND, (uint32_t[]){BAR_COLOR});
   xcb_poly_fill_rectangle(conn, window, gc, 1, &rect);
-  xcb_change_gc(conn, gc, XCB_GC_FOREGROUND | XCB_GC_BACKGROUND, (uint32_t[]){0xFFFFFF, BAR_COLOR});
+  xcb_change_gc(conn, gc, XCB_GC_FOREGROUND | XCB_GC_BACKGROUND,
+                (uint32_t[]){BAR_TEXT_COLOR, BAR_COLOR});
 
   snprintf(stack_msg, sizeof(stack_msg), "|%d|", selected_stacks[monitor]);
   xcb_image_text_8(conn, strlen(stack_msg), window, gc, bar_args->width / 2 - 14,
@@ -64,6 +65,11 @@ void *neko_create_bar(void *args)
   xcb_create_gc(conn, gc, window, XCB_GC_FOREGROUND | XCB_GC_FONT, values);
 
   xcb_map_window(conn, window);
+  xcb_flush(conn);
+
+  uint32_t v_mask = XCB_CONFIG_WINDOW_BORDER_WIDTH | XCB_CW_BORDER_PIXEL;
+  uint32_t v_list[] = {BAR_BORDER, BAR_BORDER_COLOR};
+  xcb_change_window_attributes(conn, window, v_mask, v_list);
   xcb_flush(conn);
 
   rect.x = 0;

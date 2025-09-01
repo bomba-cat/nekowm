@@ -194,10 +194,19 @@ void neko_setup()
   neko_init_socket();
   neko_grab_keybinds();
   neko_update_monitors();
+  neko_scan_message_thread();
   selected_stacks = calloc(monitor_count, sizeof(int));
   for (int i = 0; i < monitor_count; i++)
   {
+#ifdef BAR
+#if BAR_POSITION
     neko_execute_bar((neko_bar_args){monitors[i].x, 0, monitors[i].width, BAR_HEIGHT});
+#else
+    neko_execute_bar((neko_bar_args){monitors[i].x,
+                                     monitors[i].height - BAR_HEIGHT - GAP + BAR_BORDER * 2,
+                                     monitors[i].width, BAR_HEIGHT});
+#endif
+#endif
     selected_stacks[i] = i;
   }
   xcb_flush(connection);
@@ -255,8 +264,7 @@ void neko_next_stack()
   selected_stacks[monitor] = (selected_stacks[monitor] + 1) % stack_count;
   for (int i = 0; i < monitor_count; i++)
   {
-    if (selected_stacks[monitor] == selected_stacks[i] && monitor != i &&
-        selected_stacks[monitor] > -1)
+    if (selected_stacks[monitor] == selected_stacks[i] && monitor != i)
     {
       selected_stacks[monitor] = (selected_stacks[monitor] + 1) % stack_count;
     }
@@ -272,6 +280,11 @@ void neko_prev_stack()
 {
   int monitor = neko_get_monitor_under_cursor();
 
+  if (selected_stacks[monitor] == 0)
+  {
+    return;
+  }
+
   neko_stack *stack = &stacks[selected_stacks[monitor]];
   neko_unmap_stack(stack);
 
@@ -279,7 +292,7 @@ void neko_prev_stack()
   for (int i = 0; i < monitor_count; i++)
   {
     if (selected_stacks[monitor] == selected_stacks[i] && monitor != i &&
-        selected_stacks[monitor] > -1)
+        selected_stacks[monitor] - 1 > -1)
     {
       selected_stacks[monitor] = (selected_stacks[monitor] - 1) % stack_count;
     }
@@ -297,8 +310,6 @@ void neko_run()
   xcb_generic_event_t *ev;
   while (running)
   {
-    neko_scan_message();
-
     ev = xcb_poll_for_event(connection);
     if (ev)
     {
@@ -306,7 +317,7 @@ void neko_run()
     }
     else
     {
-      usleep(10000);
+      usleep(100000);
     }
   }
 }
