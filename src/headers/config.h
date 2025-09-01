@@ -9,14 +9,14 @@
  *  1 = Top
  */
 #define BAR_POSITION 0
-#define BAR_COLOR 0x2a2c2e
-#define BAR_TEXT_COLOR 0x9ea7aa
+#define BAR_COLOR 0x242428
+#define BAR_TEXT_COLOR 0x546c84
 #define BAR_HEIGHT 30
 #define BAR_BORDER 1
 #define BAR_BORDER_COLOR 0x9ea7aa
 #define BORDER 4
-#define FOCUSED 0x9ea7aa
-#define UNFOCUSED 0x2a2c2e
+#define FOCUSED 0x827ee0
+#define UNFOCUSED 0x545084
 #define GAP 15
 
 /*
