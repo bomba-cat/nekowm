@@ -38,9 +38,19 @@ NekoWM is designed to be a single, self-contained binary with:
 - No config files
 - No external daemons
 
+NekoWM is supposed to only manage your windows, not more or less. This means:
+- Basic messages for window operations like
+  - Map window
+  - Fullscreen window
+  - Close window
+- No reconfiguring on runtime
+  - No changing montior mapping
+  - No adding or removing stacks
+  - No changing any bar colors or bar positions
+
 ## Building
 ### Dependencies
-- `libxcb`
+- `libxcb` (`keysyms` and `randr`)
 - `Xlib` (only for keysyms, see [Xlib note](#xlib))
 - `gcc` (edit `Makefile` to use another compiler)
 - `make`

@@ -13,16 +13,21 @@ static void print_help(void)
          "  -v, --version      Show version and exit\n"
          "  --split-toggle     Split the toggle of the current selected window\n"
          "  --exit-neko        Kill the window manager\n"
+         "  --close-focused    Closes the currently focused window\n"
+         "  --next-stack       Switch to the next stack\n"
+         "  --previous-stack   Switch to the previous stack\n"
+         "  --focus-next       Change focus to the next window on the stack\n"
+         "  --focus-previous   Change focus to the previous window on the stack\n"
          "  STACK_COUNT        Number of stacks to create [default: 10]\n");
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
   if (argc > 1)
   {
     if (!strcmp("-v", argv[1]) || !strcmp("--version", argv[1]))
     {
-      printf("NekoWM version 0.1, Copyright © 2025 bombacat, MIT License\n");
+      printf("NekoWM version 0.2, Copyright © 2025 bombacat, MIT License\n");
       return EXIT_SUCCESS;
     }
     else if (!strcmp("-h", argv[1]) || !strcmp("--help", argv[1]))
@@ -58,10 +63,6 @@ int main(int argc, char** argv)
 
   const xcb_setup_t *setup = xcb_get_setup(connection);
   xcb_screen_iterator_t iterator = xcb_setup_roots_iterator(setup);
-  for (int i = 0; i < screen_count; ++i)
-  {
-    xcb_screen_next(&iterator);
-  }
   screen = iterator.data;
 
   signal(SIGINT, neko_cleanup);
@@ -72,12 +73,11 @@ int main(int argc, char** argv)
 
   xcb_disconnect(connection);
 
-  for(int i = 0; i < stack_c; i++)
+  for (int i = 0; i < stack_c; i++)
   {
     free(stacks[i].clients);
   }
   free(stacks);
-  if(keysyms)
-    xcb_key_symbols_free(keysyms);
+  if (keysyms) xcb_key_symbols_free(keysyms);
   return EXIT_SUCCESS;
 }

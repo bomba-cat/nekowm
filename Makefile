@@ -1,13 +1,13 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -O3
-LDFLAGS = -lxcb -lxcb-keysyms
+LDFLAGS = -lxcb -lxcb-keysyms -lxcb-randr
 
 PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin
 
 TARGET = nekowm
 BUILD_DIR = build
-SRC = src/log.c src/message.c src/keyboard.c src/window.c src/event.c src/util.c src/neko.c
+SRC = src/bar.c src/log.c src/message.c src/keyboard.c src/window.c src/event.c src/util.c src/neko.c
 BIN = $(BUILD_DIR)/$(TARGET)
 
 .PHONY: all clean install uninstall session

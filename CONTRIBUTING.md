@@ -1,3 +1,6 @@
+# Note
+Very outdated and doesn't fit anymore. Updating this very soon.
+
 # Contributing to NekoWM
 
 Thank you for considering contributing to NekoWM. This window manager is built with a minimal and standalone philosophy: no config files, no runtime dependencies, and fast builds.

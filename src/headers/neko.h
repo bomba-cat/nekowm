@@ -1,29 +1,29 @@
 #ifndef NEKO_H
 #define NEKO_H
 
-#include <xcb/xcb.h>
-#include <xcb/xcb_keysyms.h>
-#include <X11/keysym.h>
-#include <X11/keysymdef.h>
-#include <stdio.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <pthread.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <sys/wait.h>
+#include <unistd.h>
+#include <xcb/randr.h>
+#include <xcb/xcb.h>
+#include <xcb/xcb_keysyms.h>
+#include <xcb/xproto.h>
 
-/* found this in xwm */
 #define UNUSED(x) (void)(x)
 
 typedef enum
 {
-	NEKO_VERTICAL,
-	NEKO_HORIZONTAL,
+  NEKO_VERTICAL,
+  NEKO_HORIZONTAL,
 } neko_split;
 
 /* Log Flag */
@@ -37,31 +37,48 @@ typedef enum
 
 typedef struct
 {
-	char **args;
-	char *buffer;
+  int x, y, width, height;
+} neko_bar_args;
+
+typedef struct
+{
+  int x, y, width, height;
+} neko_monitor;
+
+typedef struct
+{
+  char **args;
+  char *buffer;
 } neko_command;
 
 typedef struct
 {
-	uint16_t mod;
-	xcb_keysym_t key;
-	char *command;
+  char *command;
+  int delay;
+} neko_startup_command;
+
+typedef struct
+{
+  uint16_t mod;
+  xcb_keysym_t key;
+  char *command;
 } neko_keybind;
 
 typedef struct
 {
-	int index;
-	xcb_window_t window;
-	int x, y, width, height;
-	neko_split split;
+  int index;
+  xcb_window_t window;
+  int x, y, width, height;
+  neko_split split;
 } neko_client;
 
 typedef struct
 {
-	int index;
-	int focused_client;
+  int index;
+  int focused_client;
+  xcb_window_t fullscreen_client;
   int client_count;
-	neko_client *clients;
+  neko_client *clients;
 } neko_stack;
 
 #include "config.h"
@@ -69,8 +86,11 @@ typedef struct
 extern xcb_connection_t *connection;
 extern xcb_screen_t *screen;
 extern int screen_count;
+extern neko_monitor *monitors;
+extern int monitor_count;
 extern neko_stack *stacks;
-extern int selected_stack;
+extern int *selected_stacks;
+extern int stack_count;
 extern xcb_key_symbols_t *keysyms;
 extern sig_atomic_t running;
 extern int neko_sock;
@@ -78,7 +98,7 @@ extern FILE *log_file;
 
 /* log */
 void neko_log_init();
-void neko_log(char* message, neko_log_flag flag);
+void neko_log(char *message, neko_log_flag flag);
 
 /* keyboard */
 void neko_grab_keybinds();
@@ -95,27 +115,46 @@ void neko_handle_key_press(xcb_generic_event_t *event);
 
 /* window */
 void neko_split_toggle();
+void neko_fullscreen();
+void neko_close_window();
 void neko_set_focus_color(xcb_window_t window, bool focus);
 void neko_set_focus(xcb_drawable_t window);
+void neko_next_focus();
+void neko_prev_focus();
 void neko_arrange();
+void neko_unmap_stack(neko_stack *stack);
+void neko_map_stack(neko_stack *stack);
 
 /* util */
 void neko_die(const char *msg);
+long neko_get_memory_usage();
 neko_command neko_get_arguments(const char *cmd);
 void neko_spawn(const char *cmd);
-void neko_setup_stacks(int stack_count);
+void neko_setup_stacks(int stack_c);
 void neko_add_client(xcb_window_t window);
 void neko_remove_client(xcb_window_t window);
+int neko_find_monitor_for_window(int wx, int wy);
+int neko_get_monitor_under_cursor();
+void neko_update_monitors();
+void neko_next_stack();
+void neko_prev_stack();
+void *neko_startup(void *data);
+void neko_startup_thread();
 void neko_setup();
 void neko_run();
 
 /* message */
 void neko_init_socket();
-void neko_scan_message();
+void *neko_scan_message(void *data);
+void neko_scan_message_thread();
 int neko_send_message(int argc, char **argv);
+
+/* bar */
+void *neko_create_bar(void *args);
+void neko_execute_bar(neko_bar_args args);
 
 /* main */
 void neko_exit();
 void neko_cleanup(int sig);
 
-#endif //!NEKO_H
+#endif //! NEKO_H
