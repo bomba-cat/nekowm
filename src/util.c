@@ -182,6 +182,29 @@ void neko_update_monitors()
   neko_log("Updated Monitors", INFO);
 }
 
+void *neko_startup(void *data)
+{
+  UNUSED(data);
+  for (unsigned long int i = 0; i < sizeof(startup) / sizeof(neko_startup_command); i++)
+  {
+    char buf[255];
+    sprintf(buf, "Startup: %s, Delay: %d", startup[i].command, startup[i].delay);
+    neko_log(buf, INFO);
+    sleep(startup[i].delay);
+    neko_spawn(startup[i].command);
+  }
+  return NULL;
+}
+
+void neko_startup_thread()
+{
+  pthread_t startup_thread;
+
+  pthread_create(&startup_thread, NULL, neko_startup, NULL);
+  pthread_detach(startup_thread);
+  return;
+}
+
 void neko_setup()
 {
   uint32_t values[] = {XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY |
@@ -193,6 +216,7 @@ void neko_setup()
   neko_log_init();
   neko_init_socket();
   neko_grab_keybinds();
+  neko_startup_thread();
   neko_update_monitors();
   neko_scan_message_thread();
   selected_stacks = calloc(monitor_count, sizeof(int));
@@ -317,7 +341,7 @@ void neko_run()
     }
     else
     {
-      usleep(100000);
+      usleep(50000);
     }
   }
 }

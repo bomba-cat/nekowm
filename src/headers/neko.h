@@ -53,6 +53,12 @@ typedef struct
 
 typedef struct
 {
+  char *command;
+  int delay;
+} neko_startup_command;
+
+typedef struct
+{
   uint16_t mod;
   xcb_keysym_t key;
   char *command;
@@ -132,6 +138,8 @@ int neko_get_monitor_under_cursor();
 void neko_update_monitors();
 void neko_next_stack();
 void neko_prev_stack();
+void *neko_startup(void *data);
+void neko_startup_thread();
 void neko_setup();
 void neko_run();
 

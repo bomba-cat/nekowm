@@ -47,6 +47,13 @@ static const neko_keybind keybinds[] = {
     {MOD1, XK_f, "nekowm --fullscreen"},
 };
 
+static const neko_startup_command startup[] = {
+    {"xrandr --output HDMI-0 --mode 1920x1080 --rate 75 --scale 1", 0},
+    {"xrandr --output DP-0 --mode 1920x1080 --rate 60 --scale 1 --left-of HDMI-0", 0},
+    {"feh --bg-scale /home/bombacat/Documents/neko.png", 0},
+    {"picom", 0},
+};
+
 /* Comment these out to disable them */
 #define SOCKET
 #define LOG
