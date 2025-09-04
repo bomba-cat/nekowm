@@ -1,15 +1,16 @@
 #include "headers/neko.h"
-
 int neko_sock = -1;
 
 static char valid[][255] = {
-    "--split-toggle",   "--exit-neko",  "--close-focused",  "--next-stack",
-    "--previous-stack", "--focus-next", "--focus-previous", "--fullscreen",
+    "--split-toggle",   "--exit-neko",      "--close-focused",
+    "--next-stack",     "--previous-stack", "--focus-next",
+    "--focus-previous", "--fullscreen",     "--update-monitors",
 };
 #ifdef SOCKET
 static void (*validfun[])() = {
-    neko_split_toggle, neko_exit,       neko_close_window, neko_next_stack,
-    neko_prev_stack,   neko_next_focus, neko_prev_focus,   neko_fullscreen,
+    neko_split_toggle, neko_exit,       neko_close_window,
+    neko_next_stack,   neko_prev_stack, neko_next_focus,
+    neko_prev_focus,   neko_fullscreen, neko_update_monitors_message,
 };
 #endif
 

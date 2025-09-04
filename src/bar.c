@@ -1,13 +1,34 @@
 #include "headers/neko.h"
+#include <pthread.h>
 
 xcb_rectangle_t rect;
 char *msg = "Welcome to NekoWM!";
+char stack_msg[25];
+char memory_msg[255];
+int monitor;
+bool bar_kill;
+
+void *neko_bar_info_fetcher(void *data)
+{
+  UNUSED(data);
+  while (true)
+  {
+    snprintf(memory_msg, sizeof(memory_msg), "NekoWM Memory Usage: %ld KB",
+             neko_get_memory_usage());
+    sleep(5);
+  }
+}
+
+void neko_bar_info_fetcher_thread()
+{
+  pthread_t fetcher_thread;
+
+  pthread_create(&fetcher_thread, NULL, neko_bar_info_fetcher, NULL);
+}
 
 void draw(xcb_connection_t *conn, xcb_window_t window, xcb_gcontext_t gc, neko_bar_args *bar_args)
 {
-  char stack_msg[25];
-  char memory_msg[255];
-  int monitor = neko_find_monitor_for_window(bar_args->x, bar_args->y);
+  monitor = neko_find_monitor_for_window(bar_args->x, bar_args->y);
   xcb_change_gc(conn, gc, XCB_GC_FOREGROUND, (uint32_t[]){BAR_COLOR});
   xcb_poly_fill_rectangle(conn, window, gc, 1, &rect);
   xcb_change_gc(conn, gc, XCB_GC_FOREGROUND | XCB_GC_BACKGROUND,
@@ -17,7 +38,6 @@ void draw(xcb_connection_t *conn, xcb_window_t window, xcb_gcontext_t gc, neko_b
   xcb_image_text_8(conn, strlen(stack_msg), window, gc, bar_args->width / 2 - 14,
                    bar_args->height / 2, stack_msg);
 
-  snprintf(memory_msg, sizeof(memory_msg), "NekoWM Memory Usage: %ld KB", neko_get_memory_usage());
   xcb_image_text_8(conn, strlen(memory_msg), window, gc, bar_args->width - 200,
                    bar_args->height / 2, memory_msg);
 
@@ -78,8 +98,7 @@ void *neko_create_bar(void *args)
   rect.height = bar_args->height;
 
   xcb_generic_event_t *event;
-  int running = 1;
-  while (running)
+  while (!bar_kill)
   {
     event = xcb_poll_for_event(conn);
     if (event)
@@ -121,5 +140,4 @@ void neko_execute_bar(neko_bar_args args)
   neko_bar_args *heap_args = malloc(sizeof(neko_bar_args));
   *heap_args = args;
   pthread_create(&bar_thread, NULL, neko_create_bar, heap_args);
-  pthread_detach(bar_thread);
 }

@@ -95,6 +95,7 @@ extern xcb_key_symbols_t *keysyms;
 extern sig_atomic_t running;
 extern int neko_sock;
 extern FILE *log_file;
+extern bool bar_kill;
 
 /* log */
 void neko_log_init();
@@ -135,6 +136,7 @@ void neko_add_client(xcb_window_t window);
 void neko_remove_client(xcb_window_t window);
 int neko_find_monitor_for_window(int wx, int wy);
 int neko_get_monitor_under_cursor();
+void neko_update_monitors_message();
 void neko_update_monitors();
 void neko_next_stack();
 void neko_prev_stack();
@@ -152,6 +154,8 @@ int neko_send_message(int argc, char **argv);
 /* bar */
 void *neko_create_bar(void *args);
 void neko_execute_bar(neko_bar_args args);
+void *neko_bar_info_fetcher(void *data);
+void neko_bar_info_fetcher_thread();
 
 /* main */
 void neko_exit();

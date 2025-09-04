@@ -18,6 +18,8 @@ static void print_help(void)
          "  --previous-stack   Switch to the previous stack\n"
          "  --focus-next       Change focus to the next window on the stack\n"
          "  --focus-previous   Change focus to the previous window on the stack\n"
+         "  --fullscreen       Fullscreen the currently selected window\n"
+         "  --update-monitors  Update the monitor map\n"
          "  STACK_COUNT        Number of stacks to create [default: 10]\n");
 }
 

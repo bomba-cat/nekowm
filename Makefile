@@ -46,3 +46,4 @@ session:
 uninstall:
 	@echo "Uninstalling "$(DESTDIR)$(BINDIR)/$(TARGET)
 	@rm -f $(DESTDIR)$(BINDIR)/$(TARGET)
+	@rm -f /usr/share/xsessions/nekowm.desktop

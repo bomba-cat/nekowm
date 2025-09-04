@@ -205,6 +205,40 @@ void neko_startup_thread()
   return;
 }
 
+void *neko_new_bars(void *data)
+{
+  UNUSED(data);
+  bar_kill = true;
+  usleep(250000);
+  bar_kill = false;
+
+  selected_stacks = realloc(selected_stacks, sizeof(int) * monitor_count);
+  for (int i = 0; i < monitor_count; i++)
+  {
+#ifdef BAR
+#if BAR_POSITION
+    neko_execute_bar((neko_bar_args){monitors[i].x, 0, monitors[i].width, BAR_HEIGHT});
+#else
+    neko_execute_bar((neko_bar_args){monitors[i].x,
+                                     monitors[i].height - BAR_HEIGHT - GAP + BAR_BORDER * 2,
+                                     monitors[i].width, BAR_HEIGHT});
+#endif
+#endif
+    selected_stacks[i] = i;
+  }
+  neko_arrange();
+
+  return NULL;
+}
+
+void neko_update_monitors_message()
+{
+  neko_update_monitors();
+  pthread_t kill_thread;
+  pthread_create(&kill_thread, NULL, neko_new_bars, NULL);
+  return;
+}
+
 void neko_setup()
 {
   uint32_t values[] = {XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT | XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY |
@@ -219,6 +253,7 @@ void neko_setup()
   neko_startup_thread();
   neko_update_monitors();
   neko_scan_message_thread();
+  neko_bar_info_fetcher_thread();
   selected_stacks = calloc(monitor_count, sizeof(int));
   for (int i = 0; i < monitor_count; i++)
   {
