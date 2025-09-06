@@ -29,7 +29,7 @@ int main(int argc, char **argv)
   {
     if (!strcmp("-v", argv[1]) || !strcmp("--version", argv[1]))
     {
-      printf("NekoWM version 0.2, Copyright © 2025 bombacat, MIT License\n");
+      printf("NekoWM version 1.0, Copyright © 2025 bombacat, MIT License\n");
       return EXIT_SUCCESS;
     }
     else if (!strcmp("-h", argv[1]) || !strcmp("--help", argv[1]))
