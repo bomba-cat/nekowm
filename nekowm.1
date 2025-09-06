@@ -1,0 +1,134 @@
+.\" Manpage for NekoWM
+.\" Contact: yourname@example.com
+.TH NEKOWM 1 "September 2025" "NekoWM 1.0" "User Commands"
+.SH NAME
+nekowm \- a lightweight, stack-based tiling window manager
+.SH SYNOPSIS
+.B nekowm
+[\fIOPTIONS\fR] [\fISTACK_COUNT\fR]
+.SH DESCRIPTION
+NekoWM is a lightweight tiling window manager with split-based layouts. It manages windows in a stack-like fashion: each newly spawned window splits space with the previously added window in the current stack, recursively halving space as new windows appear.
+
+NekoWM is designed as a single, self-contained binary with:
+.IP \[bu] 2
+No runtime dependencies beyond X11 libraries.
+.IP \[bu] 2
+No external configuration files or daemons.
+.IP \[bu] 2
+Static configuration at compile time via \fIsrc/headers/config.h\fR.
+
+It only manages windows, providing essential window operations without runtime reconfiguration.
+
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Show help message.
+.TP
+.B \-v, \-\-version
+Show version information and exit.
+.TP
+.B \-\-split-toggle
+Toggle split mode for the currently selected window.
+.TP
+.B \-\-exit-neko
+Exit NekoWM.
+.TP
+.B \-\-close-focused
+Close the currently focused window.
+.TP
+.B \-\-next-stack
+Switch to the next stack.
+.TP
+.B \-\-previous-stack
+Switch to the previous stack.
+.TP
+.B \-\-focus-next
+Move focus to the next window in the stack.
+.TP
+.B \-\-focus-previous
+Move focus to the previous window in the stack.
+.TP
+.B \-\-fullscreen
+Fullscreen the currently selected window.
+.TP
+.B \-\-update-monitors
+Update monitor mapping.
+.TP
+.B STACK_COUNT
+Number of stacks to create (default: 10).
+
+.SH KEYBINDINGS
+Keybindings are defined in
+.I src/headers/config.h
+and applied at compile time. They cannot be changed at runtime.
+.P
+Example:
+.IP
+{ MOD1 | MOD2, XK_Return, "dmenu_run" }
+.P
+Default modifier keys:
+.IP \[bu] 2
+MOD1 = Alt
+.IP \[bu] 2
+MOD2 = Shift
+.IP \[bu] 2
+MOD3 = Control
+.IP \[bu] 2
+MOD4 = Super
+
+.SH CONFIGURATION
+NekoWM does not read configuration files at runtime. All customization is done by editing:
+.I src/headers/config.h
+and recompiling.
+
+Available options:
+.TS
+allbox;
+l l.
+Option	Function
+BAR_POSITION	Position of the bar (0 = Bottom, 1 = Top)
+BAR_COLOR	Background color of the bar
+BAR_TEXT_COLOR	Text color of the bar
+BAR_HEIGHT	Height of the bar in pixels
+BAR_BORDER	Width of the bar border
+BAR_BORDER_COLOR	Color of the bar border
+BORDER 	Border width of each mapped window
+FOCUSED	Border color of the focused window
+UNFOCUSED	Border color of unfocused windows
+GAP	Gap between mapped windows
+SOCKET	Enable or disable UNIX socket support
+LOG	Enable or disable logging
+BAR	Enable or disable bar rendering
+SOCKET_PATH	Path for the UNIX socket
+LOG_PATH	Path of the log file
+.TE
+
+.SH EXAMPLES
+Run NekoWM with default settings:
+.P
+.B nekowm
+.P
+Run NekoWM with 5 stacks:
+.P
+.B nekowm 5
+.P
+Close the focused window:
+.P
+.B nekowm --close-focused
+
+.SH FILES
+NekoWM uses no runtime configuration files.
+
+.SH SEE ALSO
+.BR xrandr (1)
+
+.SH BUGS
+Report bugs at:
+.I https://github.com/bomba-cat/nekowm/issues
+
+.SH AUTHOR
+bomba-cat <@github.com>
+
+.SH COPYRIGHT
+Copyright (C) 2025 bomba-cat.
+License: MIT

@@ -10,6 +10,9 @@ BUILD_DIR = build
 SRC = src/bar.c src/log.c src/message.c src/keyboard.c src/window.c src/event.c src/util.c src/neko.c
 BIN = $(BUILD_DIR)/$(TARGET)
 
+MANDIR = $(PREFIX)/share/man/man1
+MANPAGE = nekowm.1
+
 .PHONY: all clean install uninstall session
 
 all: $(BUILD_DIR) $(BIN)
@@ -27,10 +30,13 @@ clean:
 	@rm -rf $(BUILD_DIR)
 
 install: all
-	@echo "Creating "$(DESTDIR)$(BINDIR)
+	@echo "Creating $(DESTDIR)$(BINDIR)"
 	@mkdir -p $(DESTDIR)$(BINDIR)
-	@echo "Copying "$(BIN)" into "$(DESTDIR)$(BINDIR)"/"$(TARGET)
+	@echo "Copying $(BIN) into $(DESTDIR)$(BINDIR)/$(TARGET)"
 	@cp $(BIN) $(DESTDIR)$(BINDIR)/$(TARGET)
+	@echo "Installing manpage to $(DESTDIR)$(MANDIR)"
+	@mkdir -p $(DESTDIR)$(MANDIR)
+	@cp $(MANPAGE) $(DESTDIR)$(MANDIR)/$(MANPAGE)
 
 session:
 	@echo "Installing NekoWM session file to /usr/share/xsessions"
@@ -44,6 +50,7 @@ session:
 	@echo "DesktopNames=nekowm" >> /usr/share/xsessions/nekowm.desktop
 
 uninstall:
-	@echo "Uninstalling "$(DESTDIR)$(BINDIR)/$(TARGET)
+	@echo "Uninstalling $(DESTDIR)$(BINDIR)/$(TARGET)"
 	@rm -f $(DESTDIR)$(BINDIR)/$(TARGET)
-	@rm -f /usr/share/xsessions/nekowm.desktop
+	@echo "Removing manpage $(DESTDIR)$(MANDIR)/$(MANPAGE)"
+	@rm -f $(DESTDIR)$(MANDIR)/$(MANPAGE)

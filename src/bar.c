@@ -1,9 +1,7 @@
 #include "headers/neko.h"
-#include <pthread.h>
 
 xcb_rectangle_t rect;
 char *msg = "Welcome to NekoWM!";
-char stack_msg[25];
 char memory_msg[255];
 int monitor;
 bool bar_kill;
@@ -28,6 +26,7 @@ void neko_bar_info_fetcher_thread()
 
 void draw(xcb_connection_t *conn, xcb_window_t window, xcb_gcontext_t gc, neko_bar_args *bar_args)
 {
+  char stack_msg[25];
   monitor = neko_find_monitor_for_window(bar_args->x, bar_args->y);
   xcb_change_gc(conn, gc, XCB_GC_FOREGROUND, (uint32_t[]){BAR_COLOR});
   xcb_poly_fill_rectangle(conn, window, gc, 1, &rect);
