@@ -81,7 +81,13 @@ typedef struct
   neko_client *clients;
 } neko_stack;
 
-#include "config.h"
+/* #define #CONFIG_HOME */
+
+#ifdef CONFIG_HOME
+  #include "~/.config/neko_config.h"
+#else
+  #include "config.h"
+#endif
 
 extern xcb_connection_t *connection;
 extern xcb_screen_t *screen;

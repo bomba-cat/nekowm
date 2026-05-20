@@ -30,28 +30,22 @@
 #define MOD3 XCB_MOD_MASK_CONTROL
 #define MOD4 XCB_MOD_MASK_4
 static const neko_keybind keybinds[] = {
-    {MOD1, XK_Return, "kitty"},
-    {MOD1, XK_d, "dmenu_run"},
+    {MOD1, XK_Return, "echo \"Example1\""},
+    {MOD1, XK_d, "echo \"Example2\""},
+
+    /* Examples using nekowm messages */
     {MOD1 | MOD2, XK_e, "nekowm --exit-neko"},
     {MOD1, XK_space, "nekowm --split-toggle"},
     {MOD1, XK_t, "nekowm --close-focused"},
-    {MOD3 | MOD4, XK_Left, "playerctl previous"},
-    {MOD3 | MOD4, XK_Right, "playerctl next"},
-    {MOD3 | MOD4, XK_Down, "playerctl play-pause"},
     {MOD1 | MOD3, XK_Right, "nekowm --next-stack"},
     {MOD1 | MOD3, XK_Left, "nekowm --previous-stack"},
     {MOD1, XK_Left, "nekowm --focus-previous"},
     {MOD1, XK_Right, "nekowm --focus-next"},
-    {MOD1, XK_F11, "pactl set-sink-volume @DEFAULT_SINK@ +5%"},
-    {MOD1, XK_F10, "pactl set-sink-volume @DEFAULT_SINK@ -5%"},
     {MOD1, XK_f, "nekowm --fullscreen"},
 };
 
 static const neko_startup_command startup[] = {
-    {"xrandr --output HDMI-0 --mode 1920x1080 --rate 75 --scale 1", 0},
-    {"xrandr --output DP-0 --mode 1920x1080 --rate 60 --scale 1 --left-of HDMI-0", 0},
-    {"feh --bg-scale /home/bombacat/Documents/neko.png", 0},
-    {"picom", 0},
+    {"echo \"Example running after 2 seconds\"", 2},
 };
 
 /* Comment these out to disable them */

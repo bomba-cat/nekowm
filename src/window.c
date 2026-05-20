@@ -72,35 +72,39 @@ void neko_close_window()
 
 void neko_set_focus_color(xcb_window_t window, bool focus)
 {
-  if ((BORDER > 0) && (screen->root != window) && (0 != window))
+  if (BORDER = 0 || screen->root == window || 0 == window)
   {
-    uint32_t values[1];
-    values[0] = focus ? FOCUSED : UNFOCUSED;
-    xcb_change_window_attributes(connection, window, XCB_CW_BORDER_PIXEL, values);
-    xcb_flush(connection);
+    return;
   }
+
+  uint32_t values[1];
+  values[0] = focus ? FOCUSED : UNFOCUSED;
+  xcb_change_window_attributes(connection, window, XCB_CW_BORDER_PIXEL, values);
+  xcb_flush(connection);
 }
 
 void neko_set_focus(xcb_drawable_t window)
 {
+  if (window == 0 || window == screen->root)
+  {
+    return;
+  }
+
   int curr_mon = neko_get_monitor_under_cursor();
   int selected_stack = selected_stacks[curr_mon];
 
-  if ((window != 0) && (window != screen->root))
+  neko_stack *stack = &stacks[selected_stack];
+
+  for (int i = 0; i < stack->client_count; i++)
   {
-    neko_stack *stack = &stacks[selected_stack];
-
-    for (int i = 0; i < stack->client_count; i++)
+    if (stack->clients[i].window == window)
     {
-      if (stack->clients[i].window == window)
-      {
-        stack->focused_client = stack->clients[i].index;
-      }
+      stack->focused_client = stack->clients[i].index;
     }
-
-    xcb_set_input_focus(connection, XCB_INPUT_FOCUS_POINTER_ROOT, window, XCB_CURRENT_TIME);
-    xcb_flush(connection);
   }
+
+  xcb_set_input_focus(connection, XCB_INPUT_FOCUS_POINTER_ROOT, window, XCB_CURRENT_TIME);
+  xcb_flush(connection);
 }
 
 void neko_next_focus()
