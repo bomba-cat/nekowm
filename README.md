@@ -1,11 +1,11 @@
 # NekoWM
 
-NekoWM is a lightweight, stack-like tiling window manager with split-based layouts.
+NekoWM is a lightweight tiling window manager using sequential split-based tiling.
 
 ---
 ### How it works
 
-Newly spawned window splits space with the previously added window in the current stack. With each new window recursively halving the space of the one before it.
+Newly spawned windows recursively split the remaining available space in the current stack, halving the active region with each new window.
 
 ---
 ### Example
@@ -44,9 +44,8 @@ NekoWM is supposed to only manage your windows, not more or less. This means:
   - Fullscreen window
   - Close window
 - No reconfiguring on runtime
-  - No changing montior mapping
+  - No changing monitor mapping
   - No adding or removing stacks
-  - No changing any bar colors or bar positions
 
 ## Building
 ### Dependencies
@@ -83,7 +82,7 @@ Xlib is only used for the `keysym` macros (`XK_*`). You can avoid this dependenc
 To disable Xlib entirely, edit `src/neko.h` and `Makefile`.
 
 ## Config
-NekoWM customization is done by editing the [config file](src/headers/config.h) and compiling from source. Due to the [Philosophy](#Philosophy) of NekoWM there will not be any config file being read from any other place on the system. Unfortunately there is no other way to configure NekoWM other than to recompile the entire program.
+NekoWM customization is done by editing the [config file](src/headers/config.h) and compiling from source. Due to the [Philosophy](#Philosophy) of NekoWM there will not be any config file being read from any other place on the system. Customization is done by editing `config.h` and recompiling NekoWM.
 ### Options
 | Name            | Function                                      |
 |-----------------|----------------------------------------------|
