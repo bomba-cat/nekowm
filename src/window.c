@@ -72,7 +72,7 @@ void neko_close_window()
 
 void neko_set_focus_color(xcb_window_t window, bool focus)
 {
-  if (BORDER = 0 || screen->root == window || 0 == window)
+  if (BORDER == 0 || screen->root == window || 0 == window)
   {
     return;
   }
